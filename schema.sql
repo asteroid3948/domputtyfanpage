@@ -18,3 +18,12 @@ CREATE TABLE IF NOT EXISTS scores (
   best_score INTEGER NOT NULL DEFAULT 0 CHECK(best_score >= 0),
   updated_at INTEGER NOT NULL DEFAULT (unixepoch())
 );
+
+-- Public name-only scores; one record per normalized first+last name.
+CREATE TABLE IF NOT EXISTS public_scores (
+  normalized_name TEXT PRIMARY KEY,
+  first_name TEXT NOT NULL,
+  last_name TEXT NOT NULL,
+  best_score INTEGER NOT NULL DEFAULT 0 CHECK(best_score >= 0),
+  updated_at INTEGER NOT NULL DEFAULT (unixepoch())
+);
