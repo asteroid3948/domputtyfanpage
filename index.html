@@ -1,90 +1,769 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#100b0d">
-  <title>Dom Putty Fanpage — Bennett's Little World</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dom Putty Fanpage</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    :root{color-scheme:dark;--wine:#8f2945;--pink:#ff7897;--muted:#c0b5b8;--gold:#ffd166}
-    *{box-sizing:border-box;margin:0;padding:0}body{min-height:100vh;background:#0b090a;color:#fff;font-family:Poppins,sans-serif;overflow-x:hidden}.page{width:min(980px,100%);margin:auto;padding:100px 18px 38px}
-    .topbar{position:fixed;z-index:10;inset:12px 14px auto;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none}.wallet,.top-actions{pointer-events:auto}.wallet{display:flex;gap:8px;align-items:center;padding:10px 14px;background:#1a1215ef;border:1px solid #68404b;border-radius:14px;box-shadow:0 6px 24px #0008;font-weight:800}.wallet strong{color:var(--gold)}.top-actions{display:flex;gap:8px}.top-button,.job-start,.buy-button,.task-button{padding:9px 13px;border:1px solid #895064;border-radius:10px;background:linear-gradient(135deg,#702239,#461522);color:#fff;font:700 .83rem Poppins,sans-serif;cursor:pointer}.top-button:hover,.job-start:hover,.buy-button:hover,.task-button:hover{filter:brightness(1.2);transform:translateY(-1px)}
-    header{text-align:center;padding:14px 0 24px}h1{font-size:clamp(2rem,7vw,3.8rem);line-height:1.1;letter-spacing:2px;text-transform:uppercase;text-shadow:0 0 22px #ffffff50}.intro{max-width:680px;margin:12px auto 0;color:#ded6d8;line-height:1.7}.game{overflow:hidden;border:1px solid #5b303c;border-radius:22px;background:#151113;box-shadow:0 18px 60px #0009,0 0 30px #8f29451f;transition:transform .08s}.game.shake{animation:shake .38s linear}@keyframes shake{0%,100%{transform:translate(0)}15%{transform:translate(-8px,4px)}30%{transform:translate(7px,-4px)}45%{transform:translate(-6px,-3px)}60%{transform:translate(6px,3px)}75%{transform:translate(-3px,2px)}}
-    .playfield{position:relative;height:min(66vh,570px);min-height:370px;overflow:hidden;touch-action:none;user-select:none;background:radial-gradient(ellipse at 50% 92%,#392029 0,#21171b 48%,#151113 100%)}.playfield:before{content:"";position:absolute;inset:auto 0 0;height:24px;background:linear-gradient(#54313d,#29191f);border-top:2px solid #784355;z-index:1}.playfield.walking{animation:walkShake .28s ease-in-out infinite alternate}@keyframes walkShake{from{transform:translateX(-1px)}to{transform:translateX(1px)}}
-    .bennett{position:absolute;z-index:3;width:var(--pet-width,150px);height:var(--pet-height,195px);object-fit:contain;left:0;top:0;cursor:grab;touch-action:none;transform-origin:50% 50%;filter:drop-shadow(0 10px 12px #0009);will-change:left,top,transform,width,height}.bennett.held{cursor:grabbing;filter:drop-shadow(0 14px 18px #000b)}.bennett.walking{animation:waddle .28s ease-in-out infinite alternate}@keyframes waddle{from{margin-top:0}to{margin-top:-5px}}.bennett.overfed{filter:drop-shadow(0 0 15px #ff7897)}
-    .speech{position:absolute;z-index:7;display:none;padding:8px 13px;border-radius:13px 13px 13px 3px;background:#fff;color:#29141b;font-size:.9rem;font-weight:800;box-shadow:0 5px 16px #0006;pointer-events:none;white-space:nowrap}.speech.show{display:block;animation:pop .22s ease-out}@keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
-    .hover-card{position:absolute;z-index:8;display:none;width:230px;padding:13px 14px;background:#120e10f2;border:1px solid #aa5a72;border-radius:13px;box-shadow:0 10px 30px #000b;pointer-events:none;text-align:left}.hover-card.show{display:block}.hover-title{display:flex;justify-content:space-between;font-size:.88rem;font-weight:800;margin-bottom:8px}.mini-stat{display:grid;grid-template-columns:78px 1fr 30px;gap:6px;align-items:center;margin:6px 0;font-size:.68rem;color:#ddd}.mini-bar{height:7px;border-radius:9px;background:#392e32;overflow:hidden}.mini-fill{height:100%;width:50%;background:linear-gradient(90deg,#9c2948,#ff7897);border-radius:9px}.mini-fill.xp{background:linear-gradient(90deg,#d3902e,#ffe28b)}
-    .food{position:absolute;z-index:4;width:52px;height:52px;object-fit:contain;cursor:grab;touch-action:none;filter:drop-shadow(0 4px 6px #0008);user-select:none}.food.held{z-index:6;cursor:grabbing;transform:scale(1.12)}.food-count{position:absolute;z-index:2;left:14px;bottom:36px;color:#ffe1a0;font-size:.8rem;font-weight:700;text-shadow:0 2px 6px #000}.controls{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 18px;color:var(--muted);font-size:.8rem}.status{color:#ffb3c2;font-weight:700;text-align:right}
-    .modal{position:fixed;z-index:20;inset:0;display:none;align-items:center;justify-content:center;padding:18px;background:#080607d9}.modal.show{display:flex}.modal-card{width:min(700px,100%);max-height:min(86vh,850px);overflow:auto;background:#1b1416;border:1px solid #7d354a;border-radius:18px;padding:22px;box-shadow:0 20px 70px #000}.modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}.modal-head h2{font-size:1.3rem}.close-button{width:34px;height:34px;border:1px solid #60404a;border-radius:9px;background:#2b1d21;color:#fff;font-size:1.1rem;cursor:pointer}.modal-subtitle{color:var(--muted);font-size:.82rem;margin-bottom:15px}.shop-grid,.jobs-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.shop-card,.job-card{padding:13px;border:1px solid #463238;border-radius:13px;background:#120f10}.card-title{font-weight:800;font-size:.92rem}.card-description{color:var(--muted);font-size:.76rem;line-height:1.5;margin:5px 0 10px}.job-meta{display:flex;gap:8px;flex-wrap:wrap;color:#f0cbd4;font-size:.7rem;margin:8px 0}.job-meta span{padding:3px 7px;border-radius:99px;background:#281a1f}.job-start:disabled,.buy-button:disabled{opacity:.45;cursor:not-allowed;transform:none}.job-game{display:none;margin-top:16px;padding:17px;border:1px solid #805064;border-radius:14px;background:#120f10}.job-game.active{display:block}.task-head{display:flex;justify-content:space-between;gap:10px;align-items:center}.task-head h3{font-size:1rem}.task-instructions{margin:8px 0 14px;color:var(--muted);font-size:.82rem;line-height:1.5}.task-prompt{padding:12px;text-align:center;border-radius:10px;background:#281a1f;font-weight:800;margin-bottom:12px}.task-options{display:flex;flex-wrap:wrap;justify-content:center;gap:9px}.task-button{min-width:76px;padding:10px 13px}.task-feedback{min-height:23px;margin-top:10px;color:#ffd166;text-align:center;font-size:.82rem;font-weight:700}.task-meter{height:8px;border-radius:99px;overflow:hidden;background:#3c3034;margin:10px 0}.task-meter span{display:block;height:100%;width:100%;background:#ff7897;transition:width .2s}.sequence{display:flex;justify-content:center;gap:8px;margin:10px}.sequence span{padding:6px 9px;border-radius:8px;background:#39272d;font-size:1.15rem}.toast{position:fixed;z-index:30;bottom:18px;left:50%;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#f6e4e9;color:#241116;border-radius:12px;padding:10px 15px;font-size:.83rem;font-weight:700;box-shadow:0 8px 25px #0008;transition:.2s;max-width:90vw;text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}footer{padding-top:17px;color:#8f8588;text-align:center;font-size:.75rem}.confetti{position:absolute;z-index:9;pointer-events:none;font-size:24px;animation:confetti .9s ease-out forwards}@keyframes confetti{to{transform:translate(var(--dx),var(--dy)) rotate(500deg);opacity:0}}
-    .game-over{z-index:40;background:#090507ed}.game-over .modal-card{text-align:center;border-color:#ff7897}.game-over h2{font-size:clamp(1.5rem,5vw,2.4rem);margin-bottom:10px}.game-over p{color:var(--muted);line-height:1.6;margin-bottom:18px}.restart-button{border:1px solid #ff9aaf;border-radius:10px;background:linear-gradient(135deg,#a72e4d,#671b31);color:white;padding:11px 18px;font:800 .95rem Poppins,sans-serif;cursor:pointer}
-    @media(max-width:600px){.page{padding:94px 10px 30px}.topbar{inset:8px 8px auto}.wallet{padding:8px 10px;font-size:.83rem}.top-button{padding:9px 10px;font-size:.78rem}.playfield{min-height:340px;height:58vh}.controls{align-items:flex-start;flex-direction:column}.status{text-align:left}.shop-grid,.jobs-grid{grid-template-columns:1fr}.hover-card{width:205px}}
+    :root {
+      --bg: #050505;
+      --panel: rgba(18, 18, 18, 0.9);
+      --wine: #7a1c31;
+      --wine-2: #5e1324;
+      --pink: #ff6b8b;
+      --gold: #ffd166;
+      --white: #ffffff;
+      --muted: #d5d5d5;
+      --shadow: rgba(122, 28, 49, 0.7);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow-x: hidden;
+      position: relative;
+      letter-spacing: 0.02em;
+    }
+
+    #snow-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .logo {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 2px solid var(--white);
+      z-index: 10;
+      box-shadow: 0 0 20px rgba(255,255,255,0.22);
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      width: 100%;
+      padding: 110px 20px 70px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+    }
+
+    @keyframes drift {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-14px); }
+    }
+
+    .floating {
+      animation: drift 3s ease-in-out infinite;
+    }
+
+    .main-title {
+      font-size: clamp(2.6rem, 7vw, 4.3rem);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 0 0 22px rgba(255,255,255,0.4);
+    }
+
+    .bio-text {
+      font-size: clamp(1.1rem, 2vw, 1.45rem);
+      font-weight: 600;
+      max-width: 640px;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+
+    .hm-section {
+      margin-top: 12px;
+      padding: 28px 22px 18px;
+      border-top: 1px solid rgba(255,255,255,0.17);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      width: min(100%, 520px);
+    }
+
+    .hm-heading {
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .hm-photo {
+      width: 220px;
+      height: 220px;
+      object-fit: cover;
+      border-radius: 20px;
+      border: 3px solid var(--white);
+      box-shadow: 0 12px 24px rgba(255,255,255,0.15);
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .hm-photo:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 32px rgba(255,255,255,0.55);
+    }
+
+    .click-hint {
+      color: #bfbfbf;
+      font-size: 0.82rem;
+    }
+
+    .hm-name {
+      font-size: 1.55rem;
+      font-weight: 600;
+    }
+
+    .photo-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 15px;
+      cursor: pointer;
+      padding: 20px;
+    }
+
+    .photo-modal.active {
+      display: flex;
+    }
+
+    .photo-modal img {
+      max-width: 90vw;
+      max-height: 80vh;
+      border-radius: 22px;
+      border: 4px solid var(--white);
+      box-shadow: 0 0 40px rgba(255,255,255,0.35);
+      object-fit: contain;
+    }
+
+    .snake-btn {
+      margin-top: 6px;
+      padding: 16px 34px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.08rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--white);
+      background: linear-gradient(135deg, var(--wine), #4a0e1c);
+      border: 2px solid var(--white);
+      border-radius: 14px;
+      cursor: pointer;
+      box-shadow: 0 0 24px var(--shadow);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+    }
+
+    .snake-btn:hover {
+      transform: scale(1.05);
+      filter: brightness(1.08);
+      box-shadow: 0 0 34px rgba(255,255,255,0.32);
+    }
+
+    .game-wrapper {
+      display: none;
+      width: min(100%, 700px);
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      background: rgba(17,17,17,0.94);
+      border: 2px solid var(--wine);
+      border-radius: 24px;
+      box-shadow: 0 0 35px rgba(122,28,49,0.52);
+      padding: 22px 18px 18px;
+    }
+
+    .game-wrapper.active {
+      display: flex;
+    }
+
+    .scoreboard {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: clamp(1rem, 2vw, 1.22rem);
+      font-weight: 800;
+      padding: 0 8px;
+    }
+
+    .score-pill {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 999px;
+      padding: 7px 12px;
+    }
+
+    .score-pill span {
+      color: var(--pink);
+    }
+
+    .canvas-shell {
+      position: relative;
+      border: 3px solid var(--white);
+      border-radius: 14px;
+      overflow: hidden;
+      background: #181818;
+      box-shadow: inset 0 0 18px rgba(255,255,255,0.03);
+    }
+
+    #snake-canvas {
+      display: block;
+      width: min(90vw, 612px);
+      height: auto;
+      background: #181818;
+    }
+
+    .game-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.78);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 16px;
+    }
+
+    .game-overlay.hidden {
+      display: none;
+    }
+
+    .overlay-title {
+      font-size: clamp(1.5rem, 4vw, 2.2rem);
+      font-weight: 800;
+    }
+
+    .controls-hint {
+      font-size: 0.95rem;
+      color: #dbdbdb;
+      text-align: center;
+      max-width: 32ch;
+      line-height: 1.5;
+    }
+
+    .touch-controls {
+      display: none;
+      grid-template-columns: repeat(3, minmax(58px, 1fr));
+      grid-template-areas:
+        ". up ."
+        "left down right";
+      gap: 10px;
+      width: min(250px, 70vw);
+      margin-top: 5px;
+    }
+
+    .touch-controls button {
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.08);
+      color: var(--white);
+      border-radius: 12px;
+      font-size: 1.45rem;
+      font-weight: 800;
+      padding: 12px 0;
+      cursor: pointer;
+      touch-action: manipulation;
+      user-select: none;
+    }
+
+    .touch-controls .up { grid-area: up; }
+    .touch-controls .left { grid-area: left; }
+    .touch-controls .down { grid-area: down; }
+    .touch-controls .right { grid-area: right; }
+
+    @media (max-width: 700px) {
+      .container { padding-top: 90px; }
+      .logo { width: 62px; height: 62px; }
+      .game-wrapper { padding: 18px 12px 20px; }
+      .touch-controls { display: grid; }
+    }
   </style>
 </head>
 <body>
-  <nav class="topbar" aria-label="Game menu"><div class="wallet">🪙 <strong id="coins">50</strong> coins</div><div class="top-actions"><button class="top-button" id="shop-open" type="button">🛒 Shop</button><button class="top-button" id="jobs-open" type="button">💼 Jobs</button></div></nav>
-  <main class="page"><header><h1>Dom Putty Fanpage</h1><p class="intro">Dom Putty is the best person of all time, he's so small and he's great at football. Help Bennett in his 2D world: earn coins, buy food, and drag treats to him.</p></header>
-    <section class="game" id="game" aria-label="Bennett's 2D world"><div class="playfield" id="playfield" aria-label="Drag Bennett to pick him up. Drag food onto him to feed him.">
-      <img class="bennett" id="bennett" src="bs.png" alt="Bennett Speller. Drag him to pick him up." draggable="false"><div class="speech" id="speech">Ow!</div>
-      <div class="hover-card" id="hover-card" role="tooltip"><div class="hover-title"><span>Bennett's stats</span><span>Lv <b id="level">1</b></span></div><div class="mini-stat"><span>❤️ Health</span><div class="mini-bar"><div class="mini-fill" id="health-fill"></div></div><b id="health-value">100</b></div><div class="mini-stat"><span>⚡ Energy</span><div class="mini-bar"><div class="mini-fill" id="energy-fill"></div></div><b id="energy-value">100</b></div><div class="mini-stat"><span>🧼 Clean</span><div class="mini-bar"><div class="mini-fill" id="clean-fill"></div></div><b id="clean-value">100</b></div><div class="mini-stat"><span>⚖️ Weight</span><div class="mini-bar"><div class="mini-fill" id="weight-fill"></div></div><b id="weight-value">0</b></div><div class="mini-stat"><span>⭐ XP</span><div class="mini-bar"><div class="mini-fill xp" id="xp-fill"></div></div><b id="xp-value">0</b></div></div>
-      <span class="food-count" id="food-count">No food in the world</span></div><div class="controls"><span>🖱️ Drag Bennett to pick him up. Drag a purchased item onto him to use it.</span><span class="status" id="status" aria-live="polite">Bennett is waddling around.</span></div></section>
-    <footer>He rights himself after a tumble. Burgers make him bigger; too many end the run—walking won't reduce his weight.</footer>
-  </main>
-  <div class="modal" id="shop-modal" role="dialog" aria-modal="true" aria-labelledby="shop-title"><div class="modal-card"><div class="modal-head"><h2 id="shop-title">🛒 Putty's Supply Shop</h2><button class="close-button" data-close="shop-modal" aria-label="Close shop">×</button></div><p class="modal-subtitle">Buy items to spawn them in the play area. Drag an item onto Bennett to use it.</p><div class="shop-grid" id="shop-grid"></div></div></div>
-  <div class="modal" id="jobs-modal" role="dialog" aria-modal="true" aria-labelledby="jobs-title"><div class="modal-card"><div class="modal-head"><h2 id="jobs-title">💼 Playable Odd Jobs</h2><button class="close-button" data-close="jobs-modal" aria-label="Close jobs">×</button></div><p class="modal-subtitle">Complete a skill game to earn your pay. Mistakes reduce your payout.</p><div class="jobs-grid" id="jobs-grid"></div><section class="job-game" id="job-game"><div class="task-head"><h3 id="task-title">Job</h3><span class="job-meta" id="task-score"></span></div><p class="task-instructions" id="task-instructions"></p><div class="task-prompt" id="task-prompt"></div><div class="task-options" id="task-options"></div><div class="task-meter"><span id="task-meter-fill"></span></div><p class="task-feedback" id="task-feedback" aria-live="polite"></p></section></div></div>
-  <div class="modal game-over" id="game-over" role="dialog" aria-modal="true" aria-labelledby="game-over-title"><div class="modal-card"><h2 id="game-over-title">💥 Bennett got too big!</h2><p>He ate too many burgers and exploded in a silly cartoon puff. This run is over. Your coins, job progress, and stats are reset when you start a new run.</p><button class="restart-button" id="restart-button" type="button">Start a new run</button></div></div>
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <canvas id="snow-canvas"></canvas>
+
+  <img src="ss.jpeg" alt="Dom Putty Logo" class="logo" />
+
+  <div class="photo-modal" id="photo-modal" onclick="closePhotoModal()">
+    <img src="unnamed.jpg" alt="Charlie Rosenberg Enlarged" />
+    <p style="font-size: 1.3rem; font-weight: 800;">Charlie Rosenberg (Click anywhere to close)</p>
+  </div>
+
+  <div class="container">
+    <h1 class="main-title floating">Dom Putty Fanpage</h1>
+
+    <p class="bio-text">
+      Dom Putty is the best person of all time, he's so small and he's great at football.
+    </p>
+
+    <div class="hm-section">
+      <h2 class="hm-heading floating">Honorary Mention</h2>
+      <img src="unnamed.jpg" alt="Charlie Rosenberg" class="hm-photo floating" onclick="openPhotoModal()" title="Click to enlarge" />
+      <span class="click-hint">(Click photo to make it bigger)</span>
+      <p class="hm-name floating">Charlie Rosenberg</p>
+    </div>
+
+    <button class="snake-btn" id="open-game-btn" onclick="openSnakeGame()">
+      Play Bennet Speller Snake
+    </button>
+
+    <div class="game-wrapper" id="game-wrapper">
+      <div class="scoreboard">
+        <div class="score-pill">Burgers Eaten: <span id="score-display">0</span></div>
+        <div class="score-pill">Best: <span id="high-score-display">0</span></div>
+      </div>
+
+      <div class="canvas-shell">
+        <canvas id="snake-canvas" width="612" height="540"></canvas>
+        <div class="game-overlay" id="game-overlay">
+          <div class="overlay-title" id="overlay-title">Bennet Speller Snake</div>
+          <p class="controls-hint" id="overlay-subtitle">Use W A S D or Arrow Keys to move and eat burgers!</p>
+          <button class="snake-btn" onclick="startSnakeGame()">Start Game</button>
+        </div>
+      </div>
+
+      <div class="touch-controls" aria-label="Touch controls">
+        <button class="up" data-dir="up" type="button">↑</button>
+        <button class="left" data-dir="left" type="button">←</button>
+        <button class="down" data-dir="down" type="button">↓</button>
+        <button class="right" data-dir="right" type="button">→</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    const $=id=>document.getElementById(id),field=$('playfield'),game=$('game'),bennett=$('bennett'),hoverCard=$('hover-card');
-    const SAVE_KEY='bennettWorldEconomy_v3',MAX_HP=100,GRAVITY=1350,FLOOR=24,WEIGHT_LIMIT=100,BASE_W=150,BASE_H=195;
-    const shopItems=[{id:'burger',name:'Burger',icon:'🍔',price:8,desc:'Restores energy; adds a lot of permanent weight.'},{id:'double',name:'Double Burger',icon:'🍔🍔',price:18,desc:'A bigger meal and a much larger weight increase.'},{id:'juice',name:'Energy Juice',icon:'🧃',price:14,desc:'Restore energy without adding weight.'},{id:'soap',name:'Soap Kit',icon:'🧼',price:20,desc:'A clean Bennett is a happy Bennett.'},{id:'firstaid',name:'First Aid Kit',icon:'🩹',price:30,desc:'Restore health after a rough landing.'},{id:'toy',name:'Squeaky Toy',icon:'🧸',price:24,desc:'A little energy and XP boost.'}];
-    const jobs=[{id:'groceries',name:'Bag Groceries',icon:'🛍️',skill:'Easy',rounds:6,pay:18,xp:12,desc:'Put each item in the matching bag color.'},{id:'shelves',name:'Stock Shelves',icon:'📦',skill:'Easy',rounds:6,pay:28,xp:18,desc:'Find the requested product in the choices.'},{id:'dogwalk',name:'Walk the Neighbor’s Dog',icon:'🐕',skill:'Medium',rounds:5,pay:45,xp:28,desc:'Press WALK only when the cue says GO!'},{id:'delivery',name:'Bike Delivery',icon:'🚲',skill:'Hard',rounds:6,pay:72,xp:42,desc:'Follow the route sequence using arrow controls.'},{id:'arcade',name:'Arcade High-Score Run',icon:'🕹️',skill:'Expert',rounds:8,pay:110,xp:60,desc:'Click the requested target; wrong targets count as mistakes.'}];
-    const fresh=()=>({coins:50,health:100,energy:100,clean:100,weight:0,level:1,xp:0});let state=fresh();try{const saved=JSON.parse(localStorage.getItem(SAVE_KEY));if(saved)state={...fresh(),...saved,weight:Math.max(0,Number(saved.weight)||0)}}catch(e){}
-    const physics={x:0,y:0,vx:0,vy:0,rotation:0,spin:0,held:false,grabX:0,grabY:0,lastX:0,lastY:0,lastMove:performance.now(),initialized:false,direction:1,damageAt:0,gameOver:false};let speechTimer=0,toastTimer=0,jobSession=null,dogTimer=null;
-    function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(state))}catch(e){}}
-    function notify(text){const t=$('toast');t.textContent=text;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2500)}
-    function say(text){const el=$('speech');el.textContent=text;el.classList.add('show');clearTimeout(speechTimer);speechTimer=setTimeout(()=>el.classList.remove('show'),1100)}
-    function fieldBounds(){return{w:field.clientWidth,h:field.clientHeight,sw:bennett.offsetWidth,sh:bennett.offsetHeight}}
-    function groundY(){const b=fieldBounds();return Math.max(0,b.h-b.sh-FLOOR)}
-    function setSpriteSize(){const b=fieldBounds(),scale=1+Math.min(state.weight,99)*.009;const oldW=bennett.offsetWidth,oldH=bennett.offsetHeight;const newW=Math.min(b.w*.62,BASE_W*scale),newH=Math.min(b.h*.78,BASE_H*scale);bennett.style.setProperty('--pet-width',`${newW}px`);bennett.style.setProperty('--pet-height',`${newH}px`);if(physics.initialized){physics.x-=(newW-oldW)/2;physics.y-=(newH-oldH);physics.x=Math.max(0,Math.min(field.clientWidth-newW,physics.x));physics.y=Math.max(0,Math.min(groundY(),physics.y))}}
-    function draw(){bennett.style.left=`${physics.x}px`;bennett.style.top=`${physics.y}px`;bennett.style.transform=`rotate(${physics.rotation}deg)`}
-    function setStat(key,value){state[key]=Math.max(0,Math.min(100,value))}
-    function levelNeed(){return 100+(state.level-1)*35}
-    function gainXP(n){state.xp+=n;while(state.xp>=levelNeed()){state.xp-=levelNeed();state.level++;state.coins+=15+state.level*3;notify(`Level ${state.level}! Bonus coins earned.`)}renderStats()}
-    function renderStats(){ $('coins').textContent=Math.floor(state.coins);$('level').textContent=state.level;for(const key of ['health','energy','clean']){$(`${key}-fill`).style.width=`${Math.round(state[key])}%`;$(`${key}-value`).textContent=Math.round(state[key])}$('weight-fill').style.width=`${Math.min(100,state.weight/WEIGHT_LIMIT*100)}%`;$('weight-value').textContent=Math.round(state.weight);$('xp-fill').style.width=`${Math.min(100,state.xp/levelNeed()*100)}%`;$('xp-value').textContent=`${state.xp}/${levelNeed()}`;bennett.classList.toggle('overfed',state.weight>=60);save()}
-    function renderShop(){$('shop-grid').innerHTML=shopItems.map(i=>`<article class="shop-card"><div class="card-title">${i.icon} ${i.name}</div><p class="card-description">${i.desc}</p><button class="buy-button" data-item="${i.id}">Buy · ${i.price} coins</button></article>`).join('');document.querySelectorAll('[data-item]').forEach(b=>b.onclick=()=>buyItem(b.dataset.item))}
-    function renderJobs(){$('jobs-grid').innerHTML=jobs.map(j=>`<article class="job-card"><div class="card-title">${j.icon} ${j.name}</div><p class="card-description">${j.desc}</p><div class="job-meta"><span>${j.skill}</span><span>${j.rounds} tasks</span><span>🪙 up to ${j.pay}</span><span>⭐ ${j.xp} XP</span></div><button class="job-start" data-job="${j.id}" ${jobSession?'disabled':''}>${jobSession?'Finish current job first':'Start job'}</button></article>`).join('');document.querySelectorAll('[data-job]').forEach(b=>b.onclick=()=>startJob(b.dataset.job))}
-    function spawnFood(type){if(physics.gameOver)return;const img=document.createElement('img');img.className='food';img.src=type==='burger'||type==='double'?'burger.png':'https://fonts.gstatic.com/s/e/notoemoji/latest/'+({juice:'1f9c3',soap:'1f9fc',firstaid:'1fa79',toy:'1f9f8'}[type])+'/512.webp';img.alt=shopItems.find(i=>i.id===type)?.name||'Item';img.draggable=false;img.dataset.type=type;const b=fieldBounds();img.style.left=`${Math.max(10,Math.random()*(b.w-65))}px`;img.style.top=`${Math.max(25,Math.random()*(b.h-120))}px`;field.appendChild(img);makeFoodDraggable(img);updateFoodCount()}
-    function buyItem(id){if(physics.gameOver)return;const item=shopItems.find(i=>i.id===id);if(!item)return;if(state.coins<item.price){notify('Not enough coins. Try a job!');return}state.coins-=item.price;spawnFood(id);renderStats();notify(`${item.name} spawned in the world.`)}
-    function updateFoodCount(){$('food-count').textContent=field.querySelectorAll('.food').length?`🍔 ${field.querySelectorAll('.food').length} item(s) in the world`:'No food in the world'}
-    function gameOver(){if(physics.gameOver)return;physics.gameOver=true;physics.held=false;jobSession=null;clearTimeout(dogTimer);bennett.classList.remove('held','walking');field.classList.remove('walking');say('POP!');game.classList.remove('shake');void game.offsetWidth;game.classList.add('shake');for(let i=0;i<32;i++){const p=document.createElement('span');p.className='confetti';p.textContent=['💥','✨','⭐','💨'][i%4];p.style.left=`${physics.x+Math.random()*fieldBounds().sw}px`;p.style.top=`${physics.y+Math.random()*fieldBounds().sh}px`;p.style.setProperty('--dx',`${Math.random()*240-120}px`);p.style.setProperty('--dy',`${Math.random()*-210-20}px`);field.appendChild(p);setTimeout(()=>p.remove(),950)}bennett.style.opacity='0';setTimeout(()=>$('game-over').classList.add('show'),450);try{localStorage.removeItem(SAVE_KEY)}catch(e){}}
-    function restartRun(){state=fresh();physics.gameOver=false;physics.rotation=0;physics.vx=physics.vy=physics.spin=0;bennett.style.opacity='1';field.querySelectorAll('.food').forEach(item=>item.remove());$('game-over').classList.remove('show');$('jobs-modal').classList.remove('show');$('job-game').classList.remove('active');renderStats();updateFoodCount();setSpriteSize();physics.initialized=false;save();notify('A fresh run begins!')}
-    function applyItem(type){if(physics.gameOver)return;const effects={burger:()=>{setStat('energy',state.energy+15);state.weight+=20;gainXP(5);say('Yum!');notify('Burger eaten! Bennett grew bigger.')},double:()=>{setStat('energy',state.energy+28);state.weight+=35;gainXP(8);say('Double yum!');notify('Double burger! Bennett grew a lot.')},juice:()=>{setStat('energy',state.energy+28);gainXP(4);say('Ahh!')},soap:()=>{setStat('clean',state.clean+38);gainXP(6);say('Fresh!')},firstaid:()=>{setStat('health',state.health+30);gainXP(8);say('Thanks!')},toy:()=>{setStat('energy',state.energy+5);gainXP(6);say('Yay!')}};(effects[type]||effects.burger)();setSpriteSize();renderStats();if(state.weight>=WEIGHT_LIMIT){gameOver();return}draw()}
-    function overlaps(a,b){return a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top}
-    function makeFoodDraggable(img){let ox=0,oy=0;img.addEventListener('pointerdown',e=>{if(physics.gameOver)return;e.preventDefault();const r=img.getBoundingClientRect(),f=field.getBoundingClientRect();ox=e.clientX-r.left;oy=e.clientY-r.top;img.classList.add('held');img.setPointerCapture(e.pointerId)});img.addEventListener('pointermove',e=>{if(!img.classList.contains('held'))return;const f=field.getBoundingClientRect();img.style.left=`${e.clientX-f.left-ox}px`;img.style.top=`${e.clientY-f.top-oy}px`});const finish=()=>{if(!img.classList.contains('held'))return;img.classList.remove('held');if(overlaps(img.getBoundingClientRect(),bennett.getBoundingClientRect())){const type=img.dataset.type;img.remove();applyItem(type)}updateFoodCount()};img.addEventListener('pointerup',finish);img.addEventListener('pointercancel',finish)}
-    function showHover(e){if(physics.held||physics.gameOver)return;const r=field.getBoundingClientRect();hoverCard.classList.add('show');hoverCard.style.left=`${Math.max(8,Math.min(e.clientX-r.left+15,field.clientWidth-240))}px`;hoverCard.style.top=`${Math.max(8,Math.min(e.clientY-r.top+12,field.clientHeight-190))}px`}bennett.addEventListener('pointerenter',showHover);bennett.addEventListener('pointermove',showHover);bennett.addEventListener('pointerleave',()=>{if(!physics.held)hoverCard.classList.remove('show')});
-    bennett.addEventListener('pointerdown',e=>{if(physics.gameOver||e.button!==undefined&&e.button!==0)return;e.preventDefault();const r=field.getBoundingClientRect();physics.held=true;physics.grounded=false;physics.vx=physics.vy=physics.spin=0;physics.grabX=e.clientX-r.left-physics.x;physics.grabY=e.clientY-r.top-physics.y;physics.lastX=e.clientX;physics.lastY=e.clientY;physics.lastMove=performance.now();bennett.classList.add('held');bennett.classList.remove('walking');bennett.setPointerCapture(e.pointerId);$('status').textContent='Bennett is in the air!';hoverCard.classList.remove('show')});
-    bennett.addEventListener('pointermove',e=>{if(!physics.held)return;e.preventDefault();const r=field.getBoundingClientRect(),now=performance.now(),dt=Math.max(.008,(now-physics.lastMove)/1000),dx=e.clientX-physics.lastX,dy=e.clientY-physics.lastY;physics.x=e.clientX-r.left-physics.grabX;physics.y=e.clientY-r.top-physics.grabY;physics.spin=Math.max(-950,Math.min(950,(dx-dy)*1.5/dt));physics.rotation+=physics.spin*dt;physics.lastX=e.clientX;physics.lastY=e.clientY;physics.lastMove=now;const b=fieldBounds();physics.x=Math.max(-b.sw*.2,Math.min(b.w-b.sw*.8,physics.x));physics.y=Math.max(0,Math.min(groundY(),physics.y));draw()});
-    function release(e){if(!physics.held)return;const dt=Math.max(.01,(performance.now()-physics.lastMove)/1000);physics.held=false;bennett.classList.remove('held');physics.vx=Math.max(-480,Math.min(480,(e.clientX-physics.lastX)/dt*.2));physics.vy=Math.max(0,Math.min(800,(e.clientY-physics.lastY)/dt*.2));physics.spin*=.4;$('status').textContent='Bennett is falling!'}bennett.addEventListener('pointerup',release);bennett.addEventListener('pointercancel',release);
-    function impact(damage){setStat('health',state.health-damage);say('Ow!');$('status').textContent=`Ouch! Bennett lost ${damage} health.`;game.classList.remove('shake');void game.offsetWidth;game.classList.add('shake');setTimeout(()=>game.classList.remove('shake'),400);renderStats()}
-    function startJob(id){if(jobSession||physics.gameOver)return;const job=jobs.find(j=>j.id===id);if(!job)return;jobSession={job,errors:0,done:0,total:job.rounds,route:[],routeIndex:0,target:null,lock:false};$('job-game').classList.add('active');$('task-title').textContent=`${job.icon} ${job.name}`;$('task-instructions').textContent=job.desc;renderJobs();beginTask()}
-    function updateTaskScore(){if(!jobSession)return;$('task-score').textContent=`Correct ${jobSession.done} · Mistakes ${jobSession.errors}`;$('task-meter-fill').style.width=`${Math.max(15,100-jobSession.errors*12)}%`}
-    function completeRound(ok,goodText,badText){if(!jobSession)return;clearTimeout(dogTimer);if(ok)jobSession.done++;else{jobSession.errors++;jobSession.done++;$('task-feedback').style.color='#ff8b95'}$('task-feedback').textContent=ok?goodText:badText;updateTaskScore();if(jobSession.done>=jobSession.total){finishJob();return}setTimeout(()=>{if(jobSession)beginTask()},500)}
-    function beginTask(){if(!jobSession)return;const j=jobSession.job;$('task-options').innerHTML='';$('task-feedback').textContent='';$('task-feedback').style.color='#ffd166';updateTaskScore();
-      if(j.id==='groceries'){const items=[['🍎','RED'],['🥦','GREEN'],['🍌','YELLOW'],['🍇','PURPLE'],['🥕','ORANGE'],['🫐','BLUE']];const item=items[Math.floor(Math.random()*items.length)];$('task-prompt').textContent=`Put ${item[0]} in the ${item[1]} bag`;const colors=['RED','GREEN','YELLOW','PURPLE','ORANGE','BLUE'].sort(()=>Math.random()-.5);colors.forEach(c=>addTaskButton(c,()=>completeRound(c===item[1],'Bagged correctly!','Wrong bag! This mistake cuts your pay.')))}
-      else if(j.id==='shelves'){const choices=['🍪 Cookies','🥫 Beans','🥛 Milk','🍞 Bread','🍎 Apples','🧀 Cheese'];const target=choices[Math.floor(Math.random()*choices.length)];$('task-prompt').textContent=`Find: ${target}`;choices.sort(()=>Math.random()-.5).forEach(item=>addTaskButton(item,()=>completeRound(item===target,'Right item stocked!','Wrong shelf! Pay reduced.')))}
-      else if(j.id==='dogwalk'){const go=Math.random()>.35;jobSession.target=go?'GO':'WAIT';$('task-prompt').textContent=go?'🐕 The dog is ready—go!':'🐕 The dog is distracted—wait!';addTaskButton('WALK',()=>completeRound(go,'Great timing!','False start! The dog was not ready.'));addTaskButton('WAIT',()=>completeRound(!go,'Good patience!','Too slow! The dog was ready.'));dogTimer=setTimeout(()=>{if(jobSession){jobSession.errors++;jobSession.done++;$('task-feedback').textContent='Missed the cue! The dog trotted ahead.';$('task-feedback').style.color='#ff8b95';updateTaskScore();if(jobSession.done>=jobSession.total)finishJob();else beginTask()}},2300)}
-      else if(j.id==='delivery'){if(!jobSession.route.length){jobSession.route=Array.from({length:jobSession.total},()=>['↑','↓','←','→'][Math.floor(Math.random()*4)]);jobSession.routeIndex=0}$('task-prompt').innerHTML=`Route: <div class="sequence">${jobSession.route.map((d,i)=>`<span style="${i<jobSession.routeIndex?'opacity:.35':''}">${d}</span>`).join('')}</div>Turn ${jobSession.routeIndex+1} of ${jobSession.total}`;['↑','↓','←','→'].forEach(dir=>addTaskButton(dir,()=>{const correct=dir===jobSession.route[jobSession.routeIndex];if(!correct)jobSession.errors++;jobSession.routeIndex++;jobSession.done=jobSession.routeIndex;updateTaskScore();$('task-feedback').textContent=correct?'Correct turn!':'Wrong turn! Delivery delayed.';$('task-feedback').style.color=correct?'#9be0ae':'#ff8b95';if(jobSession.done>=jobSession.total)finishJob();else setTimeout(()=>jobSession&&beginTask(),450)}))}
-      else if(j.id==='arcade'){const target=['⭐','🍒','💎'][Math.floor(Math.random()*3)];$('task-prompt').textContent=`Click the ${target} target!`;['⭐','🍒','💎','🪙'].sort(()=>Math.random()-.5).forEach(icon=>addTaskButton(icon,()=>completeRound(icon===target,'Bullseye!','Missed target! Pay reduced.')))}
+    function openPhotoModal() {
+      document.getElementById('photo-modal').classList.add('active');
     }
-    function addTaskButton(label,action){const b=document.createElement('button');b.type='button';b.className='task-button';b.textContent=label;b.onclick=()=>{if(jobSession)action()};$('task-options').appendChild(b)}
-    function finishJob(){if(!jobSession)return;clearTimeout(dogTimer);const session=jobSession,job=session.job;jobSession=null;const accuracy=Math.max(.2,1-(session.errors/session.total)*.8),pay=Math.max(2,Math.round(job.pay*accuracy)),xp=Math.max(1,Math.round(job.xp*accuracy));$('task-prompt').textContent=`Shift complete! ${session.errors} mistake${session.errors===1?'':'s'}.`;$('task-options').innerHTML=`<button type="button" class="task-button" id="job-collect">Collect ${pay} coins</button>`;$('task-feedback').textContent=`Mistakes lowered your payout · +${xp} XP`;$('task-score').textContent=`${session.total-session.errors}/${session.total} clean actions`;$('job-collect').onclick=()=>{state.coins+=pay;setStat('energy',state.energy-7);gainXP(xp);notify(`Job complete: +${pay} coins, +${xp} XP.`);$('job-game').classList.remove('active');renderStats();renderJobs()};renderJobs()}
-    function frame(now){const dt=Math.min(.032,(now-(frame.last||now))/1000);frame.last=now;if(!physics.initialized){setSpriteSize();const b=fieldBounds();physics.x=(b.w-b.sw)/2;physics.y=Math.max(0,groundY()-20);physics.initialized=true}const b=fieldBounds();if(!physics.held&&!physics.gameOver){physics.vy+=GRAVITY*dt;physics.x+=physics.vx*dt;physics.y+=physics.vy*dt;physics.rotation+=physics.spin*dt;physics.vx*=Math.pow(.985,dt*60);physics.spin*=Math.pow(.985,dt*60);if(physics.x<0){physics.x=0;physics.vx=Math.abs(physics.vx)*.35;physics.direction=1}if(physics.x>b.w-b.sw){physics.x=b.w-b.sw;physics.vx=-Math.abs(physics.vx)*.35;physics.direction=-1}const floor=groundY();if(physics.y>=floor){physics.y=floor;if(physics.vy>420&&now-physics.damageAt>650){physics.damageAt=now;impact(Math.max(4,Math.min(28,Math.round((physics.vy-420)/30))))}if(physics.vy>70){physics.vy=-physics.vy*.14;physics.vx*=.55}else{physics.vy=0;if(Math.abs(physics.spin)>4)physics.spin*=.84;else physics.spin=0;const upright=((physics.rotation%360)+360)%360,delta=upright>180?upright-360:upright;physics.rotation-=delta*Math.min(1,dt*10);if(Math.abs(delta)<1)physics.rotation=0;if(Math.abs(physics.vx)<20)physics.vx=physics.direction*35;else physics.direction=Math.sign(physics.vx)||physics.direction;physics.x+=physics.direction*28*dt;physics.x=Math.max(0,Math.min(b.w-b.sw,physics.x));$('status').textContent='Bennett is waddling around.';bennett.classList.add('walking');field.classList.add('walking')}}else{bennett.classList.remove('walking');field.classList.remove('walking');$('status').textContent='Bennett is getting back on his feet…';if(physics.rotation>90&&physics.rotation<270)physics.rotation+=(360-physics.rotation)*Math.min(1,dt*2)}}else{bennett.classList.remove('walking');field.classList.remove('walking')}draw();requestAnimationFrame(frame)}
-    $('shop-open').onclick=()=>{if(!physics.gameOver)$('shop-modal').classList.add('show')};$('jobs-open').onclick=()=>{if(!physics.gameOver)$('jobs-modal').classList.add('show')};document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>$(b.dataset.close).classList.remove('show'));document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m&&m.id!=='game-over')m.classList.remove('show')}));window.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal.show:not(.game-over)').forEach(m=>m.classList.remove('show'))});$('restart-button').onclick=restartRun;
-    bennett.addEventListener('load',()=>{if(!physics.initialized){setSpriteSize();const b=fieldBounds();physics.x=(b.w-b.sw)/2;physics.y=Math.max(0,groundY()-20);physics.initialized=true;draw()}});window.addEventListener('resize',()=>{if(!physics.held){setSpriteSize();const b=fieldBounds();physics.x=Math.max(0,Math.min(b.w-b.sw,physics.x));physics.y=Math.min(physics.y,groundY());draw()}});
-    renderShop();renderJobs();renderStats();updateFoodCount();setInterval(()=>{if(physics.gameOver)return;if(state.health<MAX_HP)state.health=Math.min(MAX_HP,state.health+1);if(state.energy<100)state.energy=Math.min(100,state.energy+.2);if(state.clean>0)state.clean=Math.max(0,state.clean-.03);renderStats()},10000);requestAnimationFrame(frame);
+
+    function closePhotoModal() {
+      document.getElementById('photo-modal').classList.remove('active');
+    }
+
+    // Snow background
+    const snowCanvas = document.getElementById('snow-canvas');
+    const snowCtx = snowCanvas.getContext('2d');
+
+    let snowWidth = snowCanvas.width = window.innerWidth;
+    let snowHeight = snowCanvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      snowWidth = snowCanvas.width = window.innerWidth;
+      snowHeight = snowCanvas.height = window.innerHeight;
+    });
+
+    const snowflakes = [];
+    const numFlakes = 120;
+
+    for (let i = 0; i < numFlakes; i++) {
+      snowflakes.push({
+        x: Math.random() * snowWidth,
+        y: Math.random() * snowHeight,
+        radius: Math.random() * 3.5 + 1,
+        speedY: Math.random() * 1.5 + 0.5,
+        speedX: Math.random() * 1 - 0.5,
+      });
+    }
+
+    function drawSnow() {
+      snowCtx.clearRect(0, 0, snowWidth, snowHeight);
+      snowCtx.fillStyle = '#ffffff';
+      snowCtx.beginPath();
+      for (let i = 0; i < numFlakes; i++) {
+        const flake = snowflakes[i];
+        snowCtx.moveTo(flake.x, flake.y);
+        snowCtx.arc(flake.x, flake.y, flake.radius, 0, Math.PI * 2);
+      }
+      snowCtx.fill();
+      updateSnow();
+      requestAnimationFrame(drawSnow);
+    }
+
+    function updateSnow() {
+      for (let i = 0; i < numFlakes; i++) {
+        const flake = snowflakes[i];
+        flake.y += flake.speedY;
+        flake.x += flake.speedX;
+
+        if (flake.y > snowHeight) {
+          flake.y = -flake.radius;
+          flake.x = Math.random() * snowWidth;
+        }
+
+        if (flake.x > snowWidth) flake.x = 0;
+        else if (flake.x < 0) flake.x = snowWidth;
+      }
+    }
+
+    drawSnow();
+
+    // Snake game
+    const gameCanvas = document.getElementById('snake-canvas');
+    const ctx = gameCanvas.getContext('2d');
+    const TILE_SIZE = 36;
+    const COLS = 17;
+    const ROWS = 15;
+
+    const headImg = new Image();
+    headImg.src = 'bs.png';
+
+    const burgerImg = new Image();
+    burgerImg.src = 'burger.png';
+
+    let snake = [];
+    let direction = { x: 1, y: 0 };
+    let inputQueue = [];
+    let burger = { x: 12, y: 7 };
+    let powerup = null;
+    let obstacles = [];
+    let score = 0;
+    let highScore = 0;
+    let gameLoop = null;
+    let isGameRunning = false;
+    let tickDelay = 130;
+    let boostTimer = 0;
+
+    try {
+      highScore = Number(localStorage.getItem('bennetSnakeBest')) || 0;
+    } catch (err) {
+      highScore = 0;
+    }
+
+    document.getElementById('high-score-display').textContent = highScore;
+
+    function openSnakeGame() {
+      const wrapper = document.getElementById('game-wrapper');
+      wrapper.classList.add('active');
+      wrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      drawBoard();
+    }
+
+    function setDirection(nextDir) {
+      if (!isGameRunning) return;
+      const lastDir = inputQueue.length > 0 ? inputQueue[inputQueue.length - 1] : direction;
+      if (nextDir.x === -lastDir.x && nextDir.y === -lastDir.y) return;
+      inputQueue.push(nextDir);
+    }
+
+    function handleDirectionChange(dir) {
+      const keyMap = {
+        up: { x: 0, y: -1 },
+        down: { x: 0, y: 1 },
+        left: { x: -1, y: 0 },
+        right: { x: 1, y: 0 }
+      };
+      setDirection(keyMap[dir]);
+    }
+
+    document.querySelectorAll('[data-dir]').forEach(button => {
+      button.addEventListener('click', () => handleDirectionChange(button.dataset.dir));
+    });
+
+    function buildObstacles() {
+      const newObstacles = [];
+      const limit = Math.min(10, 2 + Math.floor(score / 5));
+
+      for (let i = 0; i < limit; i++) {
+        let candidate = {
+          x: Math.floor(Math.random() * COLS),
+          y: Math.floor(Math.random() * ROWS)
+        };
+
+        while (
+          snake.some(seg => seg.x === candidate.x && seg.y === candidate.y) ||
+          (candidate.x === burger.x && candidate.y === burger.y) ||
+          newObstacles.some(obs => obs.x === candidate.x && obs.y === candidate.y)
+        ) {
+          candidate = {
+            x: Math.floor(Math.random() * COLS),
+            y: Math.floor(Math.random() * ROWS)
+          };
+        }
+
+        newObstacles.push(candidate);
+      }
+
+      return newObstacles;
+    }
+
+    function buildFood() {
+      let valid = false;
+      while (!valid) {
+        burger = {
+          x: Math.floor(Math.random() * COLS),
+          y: Math.floor(Math.random() * ROWS)
+        };
+
+        valid = !snake.some(seg => seg.x === burger.x && seg.y === burger.y) &&
+          !obstacles.some(obs => obs.x === burger.x && obs.y === burger.y);
+      }
+    }
+
+    function spawnPowerup() {
+      if (powerup || Math.random() > 0.35) return;
+
+      let candidate = {
+        x: Math.floor(Math.random() * COLS),
+        y: Math.floor(Math.random() * ROWS)
+      };
+
+      while (
+        snake.some(seg => seg.x === candidate.x && seg.y === candidate.y) ||
+        obstacles.some(obs => obs.x === candidate.x && obs.y === candidate.y) ||
+        (candidate.x === burger.x && candidate.y === burger.y)
+      ) {
+        candidate = {
+          x: Math.floor(Math.random() * COLS),
+          y: Math.floor(Math.random() * ROWS)
+        };
+      }
+
+      powerup = candidate;
+    }
+
+    function scheduleNextTick() {
+      if (!isGameRunning) return;
+      if (gameLoop) clearTimeout(gameLoop);
+      gameLoop = setTimeout(updateGame, tickDelay);
+    }
+
+    function startSnakeGame() {
+      snake = [
+        { x: 5, y: 7 },
+        { x: 4, y: 7 },
+        { x: 3, y: 7 }
+      ];
+      direction = { x: 1, y: 0 };
+      inputQueue = [];
+      score = 0;
+      tickDelay = 130;
+      boostTimer = 0;
+      powerup = null;
+      obstacles = [];
+
+      document.getElementById('score-display').textContent = score;
+      document.getElementById('game-overlay').classList.add('hidden');
+
+      burger = { x: 12, y: 7 };
+      buildFood();
+      obstacles = buildObstacles();
+
+      isGameRunning = true;
+      if (gameLoop) clearTimeout(gameLoop);
+      scheduleNextTick();
+    }
+
+    window.addEventListener('keydown', (event) => {
+      const key = event.key.toLowerCase();
+      if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(key)) {
+        if (isGameRunning) event.preventDefault();
+      }
+
+      if (key === 'w' || key === 'arrowup') setDirection({ x: 0, y: -1 });
+      else if (key === 's' || key === 'arrowdown') setDirection({ x: 0, y: 1 });
+      else if (key === 'a' || key === 'arrowleft') setDirection({ x: -1, y: 0 });
+      else if (key === 'd' || key === 'arrowright') setDirection({ x: 1, y: 0 });
+    });
+
+    function updateGame() {
+      if (inputQueue.length > 0) {
+        const next = inputQueue.shift();
+        const reverse = direction.x === -next.x && direction.y === -next.y;
+        if (!reverse) direction = next;
+      }
+
+      const newHead = {
+        x: snake[0].x + direction.x,
+        y: snake[0].y + direction.y
+      };
+
+      if (newHead.x < 0 || newHead.x >= COLS || newHead.y < 0 || newHead.y >= ROWS) {
+        return endGame();
+      }
+
+      const willEat = newHead.x === burger.x && newHead.y === burger.y;
+      const willHitTail = !willEat && snake.length > 1 && snake.some((seg, index) => index !== snake.length - 1 && seg.x === newHead.x && seg.y === newHead.y);
+      const willHitObstacle = obstacles.some(obs => obs.x === newHead.x && obs.y === newHead.y);
+
+      if (willHitTail || willHitObstacle) {
+        return endGame();
+      }
+
+      snake.unshift(newHead);
+
+      if (willEat) {
+        score++;
+        document.getElementById('score-display').textContent = score;
+        if (score > highScore) {
+          highScore = score;
+          try { localStorage.setItem('bennetSnakeBest', highScore); } catch (err) {}
+          document.getElementById('high-score-display').textContent = highScore;
+        }
+        obstacles = buildObstacles();
+        buildFood();
+        spawnPowerup();
+      } else {
+        snake.pop();
+      }
+
+      if (powerup && newHead.x === powerup.x && newHead.y === powerup.y) {
+        powerup = null;
+        score += 2;
+        document.getElementById('score-display').textContent = score;
+        boostTimer = 7000;
+        if (score > highScore) {
+          highScore = score;
+          try { localStorage.setItem('bennetSnakeBest', highScore); } catch (err) {}
+          document.getElementById('high-score-display').textContent = highScore;
+        }
+      }
+
+      if (boostTimer > 0) boostTimer -= tickDelay;
+      tickDelay = Math.max(55, 130 - score * 3 - (boostTimer > 0 ? 25 : 0));
+
+      drawBoard();
+      scheduleNextTick();
+    }
+
+    function drawBoard() {
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          const isDark = (r + c) % 2 === 0;
+          ctx.fillStyle = isDark ? '#1d1d1d' : '#141414';
+          ctx.fillRect(c * TILE_SIZE, r * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+          ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+          ctx.strokeRect(c * TILE_SIZE + 0.5, r * TILE_SIZE + 0.5, TILE_SIZE - 1, TILE_SIZE - 1);
+        }
+      }
+
+      obstacles.forEach(obs => {
+        ctx.fillStyle = '#4b0c1f';
+        ctx.fillRect(obs.x * TILE_SIZE + 4, obs.y * TILE_SIZE + 4, TILE_SIZE - 8, TILE_SIZE - 8);
+        ctx.strokeStyle = '#ff8aa3';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(obs.x * TILE_SIZE + 5, obs.y * TILE_SIZE + 5, TILE_SIZE - 10, TILE_SIZE - 10);
+      });
+
+      const burgerCenterX = burger.x * TILE_SIZE + TILE_SIZE / 2;
+      const burgerCenterY = burger.y * TILE_SIZE + TILE_SIZE / 2;
+      if (burgerImg.complete && burgerImg.naturalWidth > 0) {
+        const aspect = burgerImg.naturalWidth / burgerImg.naturalHeight;
+        const drawH = TILE_SIZE * 1.35;
+        const drawW = drawH * aspect;
+        ctx.drawImage(burgerImg, burgerCenterX - drawW / 2, burgerCenterY - drawH / 2, drawW, drawH);
+      } else {
+        ctx.fillStyle = '#f5a623';
+        ctx.beginPath();
+        ctx.arc(burgerCenterX, burgerCenterY, TILE_SIZE * 0.38, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      if (powerup) {
+        const px = powerup.x * TILE_SIZE + TILE_SIZE / 2;
+        const py = powerup.y * TILE_SIZE + TILE_SIZE / 2;
+        ctx.save();
+        ctx.translate(px, py);
+        ctx.fillStyle = '#ffe66d';
+        ctx.shadowColor = '#ffe66d';
+        ctx.shadowBlur = 14;
+        ctx.beginPath();
+        for (let i = 0; i < 5; i++) {
+          const outer = 12;
+          const inner = 5;
+          const angle = (Math.PI / 180) * (i * 72 - 90);
+          const x1 = Math.cos(angle) * outer;
+          const y1 = Math.sin(angle) * outer;
+          const x2 = Math.cos(angle + Math.PI / 5) * inner;
+          const y2 = Math.sin(angle + Math.PI / 5) * inner;
+          if (i === 0) ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+
+      for (let i = snake.length - 1; i >= 1; i--) {
+        const seg = snake[i];
+        const pad = 2;
+        ctx.fillStyle = i % 2 === 0 ? '#7a1c31' : '#5e1324';
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1;
+
+        if (typeof ctx.roundRect === 'function') {
+          ctx.beginPath();
+          ctx.roundRect(
+            seg.x * TILE_SIZE + pad,
+            seg.y * TILE_SIZE + pad,
+            TILE_SIZE - pad * 2,
+            TILE_SIZE - pad * 2,
+            6
+          );
+          ctx.fill();
+          ctx.stroke();
+        } else {
+          ctx.fillRect(seg.x * TILE_SIZE + pad, seg.y * TILE_SIZE + pad, TILE_SIZE - pad * 2, TILE_SIZE - pad * 2);
+        }
+      }
+
+      if (snake.length > 0) {
+        const head = snake[0];
+        const headCenterX = head.x * TILE_SIZE + TILE_SIZE / 2;
+        const headCenterY = head.y * TILE_SIZE + TILE_SIZE / 2;
+
+        if (headImg.complete && headImg.naturalWidth > 0) {
+          const aspect = headImg.naturalWidth / headImg.naturalHeight;
+          const drawH = TILE_SIZE * 1.85;
+          const drawW = drawH * aspect;
+          ctx.drawImage(headImg, headCenterX - drawW / 2, headCenterY - drawH / 2 - 4, drawW, drawH);
+        } else {
+          ctx.fillStyle = '#9e2440';
+          ctx.fillRect(head.x * TILE_SIZE, head.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        }
+      }
+    }
+
+    function endGame() {
+      isGameRunning = false;
+      clearTimeout(gameLoop);
+      document.getElementById('overlay-title').textContent = 'Game Over!';
+      document.getElementById('overlay-subtitle').textContent = `Bennet ate ${score} burger${score === 1 ? '' : 's'}!`;
+      document.querySelector('#game-overlay .snake-btn').textContent = 'Play Again';
+      document.getElementById('game-overlay').classList.remove('hidden');
+    }
   </script>
 </body>
 </html>
