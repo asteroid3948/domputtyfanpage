@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dom Putty Fanpage</title>
-    <link href="https://googleapis.com" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -277,7 +279,7 @@
     <!-- Main Center Content -->
     <div class="container">
         <h1 class="main-title floating">Dom Putty Fanpage</h1>
-        
+
         <p class="bio-text">
             Dom Putty is the best person of all time, he's so small and he's great at football.
         </p>
@@ -301,7 +303,7 @@
                 <div>Burgers Eaten: <span id="score-display">0</span></div>
                 <div>Best: <span id="high-score-display">0</span></div>
             </div>
-            
+
             <div class="canvas-container">
                 <canvas id="snake-canvas" width="612" height="540"></canvas>
                 <div class="game-overlay" id="game-overlay">
@@ -341,213 +343,259 @@
         for (let i = 0; i < numFlakes; i++) {
             snowflakes.push({
                 x: Math.random() * width,
-Use code with caution.
-y: Math.random() * height,
-radius: Math.random() * 3.5 + 1,
-speedY: Math.random() * 1.5 + 0.5,
-speedX: Math.random() * 1 - 0.5
-});
-}
-function drawSnow() {
-snowCtx.clearRect(0, 0, width, height);
-snowCtx.fillStyle = '#ffffff';
-snowCtx.beginPath();
-for (let i = 0; i < numFlakes; i++) {
-const flake = snowflakes[i];
-snowCtx.moveTo(flake.x, flake.y);
-snowCtx.arc(flake.x, flake.y, flake.radius, 0, Math.PI * 2);
-}
-snowCtx.fill();
-updateSnow();
-requestAnimationFrame(drawSnow);
-}
-function updateSnow() {
-for (let i = 0; i < numFlakes; i++) {
-const flake = snowflakes[i];
-flake.y += flake.speedY;
-flake.x += flake.speedX;
-if (flake.y > height) {
-flake.y = -flake.radius;
-flake.x = Math.random() * width;
-}
-if (flake.x > width) flake.x = 0;
-else if (flake.x < 0) flake.x = width;
-}
-}
-drawSnow();
-/* 3. BENNET SPELLER SNAKE GAME */
-const gameCanvas = document.getElementById('snake-canvas');
-const ctx = gameCanvas.getContext('2d');
-const TILE_SIZE = 36;
-const COLS = 17;
-const ROWS = 15;
-const headImg = new Image();
-headImg.src = 'bs.png';
-const burgerImg = new Image();
-burgerImg.src = 'burger.png';
-let snake = [];
-let direction = { x: 1, y: 0 };
-let inputQueue = [];
-let burger = { x: 12, y: 7 };
-let score = 0;
-let highScore = localStorage.getItem('bennetSnakeBest') || 0;
-let gameLoop = null;
-let isGameRunning = false;
-document.getElementById('high-score-display').textContent = highScore;
-function openSnakeGame() {
-const wrapper = document.getElementById('game-wrapper');
-wrapper.classList.add('active');
-wrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
-drawBoard();
-}
-function startSnakeGame() {
-snake = [
-{ x: 5, y: 7 },
-{ x: 4, y: 7 },
-{ x: 3, y: 7 }
-];
-direction = { x: 1, y: 0 };
-inputQueue = [];
-score = 0;
-document.getElementById('score-display').textContent = score;
-document.getElementById('game-overlay').classList.add('hidden');
-spawnBurger();
-isGameRunning = true;
-if (gameLoop) clearInterval(gameLoop);
-gameLoop = setInterval(updateGame, 130);
-}
-function spawnBurger() {
-let valid = false;
-while (!valid) {
-burger = {
-x: Math.floor(Math.random() * COLS),
-y: Math.floor(Math.random() * ROWS)
-};
-valid = !snake.some(seg => seg.x === burger.x && seg.y === burger.y);
-}
-}
-window.addEventListener('keydown', (e) => {
-const key = e.key.toLowerCase();
-if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(key)) {
-if (isGameRunning) e.preventDefault();
-}
-const lastDir = inputQueue.length > 0 ? inputQueue[inputQueue.length - 1] : direction;
-if ((key === 'w' || key === 'arrowup') && lastDir.y !== 1) {
-inputQueue.push({ x: 0, y: -1 });
-} else if ((key === 's' || key === 'arrowdown') && lastDir.y !== -1) {
-inputQueue.push({ x: 0, y: 1 });
-} else if ((key === 'a' || key === 'arrowleft') && lastDir.x !== 1) {
-inputQueue.push({ x: -1, y: 0 });
-} else if ((key === 'd' || key === 'arrowright') && lastDir.x !== -1) {
-inputQueue.push({ x: 1, y: 0 });
-}
-});
-function updateGame() {
-if (inputQueue.length > 0) {
-direction = inputQueue.shift();
-}
-const newHead = {
-x: snake[0].x + direction.x,
-y: snake[0].y + direction.y
-};
-// Wall collision
-if (newHead.x < 0 || newHead.x >= COLS || newHead.y < 0 || newHead.y >= ROWS) {
-return endGame();
-}
-// Self collision
-if (snake.some(seg => seg.x === newHead.x && seg.y === newHead.y)) {
-return endGame();
-}
-snake.unshift(newHead);
-// Check burger eaten
-if (newHead.x === burger.x && newHead.y === burger.y) {
-score++;
-document.getElementById('score-display').textContent = score;
-if (score > highScore) {
-highScore = score;
-localStorage.setItem('bennetSnakeBest', highScore);
-document.getElementById('high-score-display').textContent = highScore;
-}
-spawnBurger();
-} else {
-snake.pop();
-}
-drawBoard();
-}
-function drawBoard() {
-// 1. Alternating grid squares
-for (let r = 0; r < ROWS; r++) {
-for (let c = 0; c < COLS; c++) {
-ctx.fillStyle = (r + c) % 2 === 0 ? '#1d1d1d' : '#141414';
-ctx.fillRect(c * TILE_SIZE, r * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-}
-}
-// 2. Burger sprite
-const burgerCenterX = burger.x * TILE_SIZE + TILE_SIZE / 2;
-const burgerCenterY = burger.y * TILE_SIZE + TILE_SIZE / 2;
-if (burgerImg.complete && burgerImg.naturalWidth > 0) {
-const aspect = burgerImg.naturalWidth / burgerImg.naturalHeight;
-const drawH = TILE_SIZE * 1.35;
-const drawW = drawH * aspect;
-ctx.drawImage(
-burgerImg,
-burgerCenterX - drawW / 2,
-burgerCenterY - drawH / 2,
-drawW,
-drawH
-);
-} else {
-ctx.fillStyle = '#f5a623';
-ctx.beginPath();
-ctx.arc(burgerCenterX, burgerCenterY, TILE_SIZE * 0.4, 0, Math.PI * 2);
-ctx.fill();
-}
-// 3. Maroon body squares
-for (let i = snake.length - 1; i >= 1; i--) {
-const seg = snake[i];
-const pad = 2;
-ctx.fillStyle = i % 2 === 0 ? '#7a1c31' : '#5e1324';
-ctx.strokeStyle = '#ffffff';
-ctx.lineWidth = 1;
-ctx.beginPath();
-ctx.roundRect(
-seg.x * TILE_SIZE + pad,
-seg.y * TILE_SIZE + pad,
-TILE_SIZE - pad * 2,
-TILE_SIZE - pad * 2,
-6
-);
-ctx.fill();
-ctx.stroke();
-}
-// 4. Bennet Speller Head (bs.png)
-if (snake.length > 0) {
-const head = snake[0];
-const headCenterX = head.x * TILE_SIZE + TILE_SIZE / 2;
-const headCenterY = head.y * TILE_SIZE + TILE_SIZE / 2;
-if (headImg.complete && headImg.naturalWidth > 0) {
-const aspect = headImg.naturalWidth / headImg.naturalHeight;
-const drawH = TILE_SIZE * 1.75;
-const drawW = drawH * aspect;
-ctx.drawImage(
-headImg,
-headCenterX - drawW / 2,
-headCenterY - drawH / 2 - 4,
-drawW,
-drawH
-);
-} else {
-ctx.fillStyle = '#9e2440';
-ctx.fillRect(head.x * TILE_SIZE, head.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-}
-}
-}
-function endGame() {
-isGameRunning = false;
-clearInterval(gameLoop);
-document.getElementById('overlay-title').textContent = 'Game Over!';
-document.getElementById('overlay-subtitle').textContent = Bennet ate ${score} burger${score === 1 ? '' : 's'}!;
-document.querySelector('#game-overlay .snake-btn').textContent = 'Play Again';
-document.getElementById('game-overlay').classList.remove('hidden');
-}
+                y: Math.random() * height,
+                radius: Math.random() * 3.5 + 1,
+                speedY: Math.random() * 1.5 + 0.5,
+                speedX: Math.random() * 1 - 0.5
+            });
+        }
 
+        function drawSnow() {
+            snowCtx.clearRect(0, 0, width, height);
+            snowCtx.fillStyle = '#ffffff';
+            snowCtx.beginPath();
+            for (let i = 0; i < numFlakes; i++) {
+                const flake = snowflakes[i];
+                snowCtx.moveTo(flake.x, flake.y);
+                snowCtx.arc(flake.x, flake.y, flake.radius, 0, Math.PI * 2);
+            }
+            snowCtx.fill();
+            updateSnow();
+            requestAnimationFrame(drawSnow);
+        }
+
+        function updateSnow() {
+            for (let i = 0; i < numFlakes; i++) {
+                const flake = snowflakes[i];
+                flake.y += flake.speedY;
+                flake.x += flake.speedX;
+                if (flake.y > height) {
+                    flake.y = -flake.radius;
+                    flake.x = Math.random() * width;
+                }
+                if (flake.x > width) flake.x = 0;
+                else if (flake.x < 0) flake.x = width;
+            }
+        }
+
+        drawSnow();
+
+        /* 3. BENNET SPELLER SNAKE GAME */
+        const gameCanvas = document.getElementById('snake-canvas');
+        const ctx = gameCanvas.getContext('2d');
+        const TILE_SIZE = 36;
+        const COLS = 17;
+        const ROWS = 15;
+
+        const headImg = new Image();
+        headImg.src = 'bs.png';
+        const burgerImg = new Image();
+        burgerImg.src = 'burger.png';
+
+        let snake = [];
+        let direction = { x: 1, y: 0 };
+        let inputQueue = [];
+        let burger = { x: 12, y: 7 };
+        let score = 0;
+
+        let highScore = 0;
+        try {
+            highScore = Number(localStorage.getItem('bennetSnakeBest')) || 0;
+        } catch (error) {
+            highScore = 0;
+        }
+
+        let gameLoop = null;
+        let isGameRunning = false;
+        document.getElementById('high-score-display').textContent = highScore;
+
+        function openSnakeGame() {
+            const wrapper = document.getElementById('game-wrapper');
+            wrapper.classList.add('active');
+            wrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            drawBoard();
+        }
+
+        function startSnakeGame() {
+            snake = [
+                { x: 5, y: 7 },
+                { x: 4, y: 7 },
+                { x: 3, y: 7 }
+            ];
+            direction = { x: 1, y: 0 };
+            inputQueue = [];
+            score = 0;
+            document.getElementById('score-display').textContent = score;
+            document.getElementById('game-overlay').classList.add('hidden');
+            spawnBurger();
+            isGameRunning = true;
+            if (gameLoop) clearInterval(gameLoop);
+            gameLoop = setInterval(updateGame, 130);
+        }
+
+        function spawnBurger() {
+            let valid = false;
+            while (!valid) {
+                burger = {
+                    x: Math.floor(Math.random() * COLS),
+                    y: Math.floor(Math.random() * ROWS)
+                };
+                valid = !snake.some(seg => seg.x === burger.x && seg.y === burger.y);
+            }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            const key = e.key.toLowerCase();
+            if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(key)) {
+                if (isGameRunning) e.preventDefault();
+            }
+
+            const lastDir = inputQueue.length > 0 ? inputQueue[inputQueue.length - 1] : direction;
+
+            if ((key === 'w' || key === 'arrowup') && lastDir.y !== 1) {
+                inputQueue.push({ x: 0, y: -1 });
+            } else if ((key === 's' || key === 'arrowdown') && lastDir.y !== -1) {
+                inputQueue.push({ x: 0, y: 1 });
+            } else if ((key === 'a' || key === 'arrowleft') && lastDir.x !== 1) {
+                inputQueue.push({ x: -1, y: 0 });
+            } else if ((key === 'd' || key === 'arrowright') && lastDir.x !== -1) {
+                inputQueue.push({ x: 1, y: 0 });
+            }
+        });
+
+        function updateGame() {
+            if (inputQueue.length > 0) {
+                direction = inputQueue.shift();
+            }
+
+            const newHead = {
+                x: snake[0].x + direction.x,
+                y: snake[0].y + direction.y
+            };
+
+            // Wall collision
+            if (newHead.x < 0 || newHead.x >= COLS || newHead.y < 0 || newHead.y >= ROWS) {
+                return endGame();
+            }
+
+            // Self collision
+            if (snake.some(seg => seg.x === newHead.x && seg.y === newHead.y)) {
+                return endGame();
+            }
+
+            snake.unshift(newHead);
+
+            // Check burger eaten
+            if (newHead.x === burger.x && newHead.y === burger.y) {
+                score++;
+                document.getElementById('score-display').textContent = score;
+                if (score > highScore) {
+                    highScore = score;
+                    try {
+                        localStorage.setItem('bennetSnakeBest', highScore);
+                    } catch (error) {
+                        // Ignore storage issues in restricted environments
+                    }
+                    document.getElementById('high-score-display').textContent = highScore;
+                }
+                spawnBurger();
+            } else {
+                snake.pop();
+            }
+
+            drawBoard();
+        }
+
+        function drawBoard() {
+            // 1. Alternating grid squares
+            for (let r = 0; r < ROWS; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    ctx.fillStyle = (r + c) % 2 === 0 ? '#1d1d1d' : '#141414';
+                    ctx.fillRect(c * TILE_SIZE, r * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                }
+            }
+
+            // 2. Burger sprite
+            const burgerCenterX = burger.x * TILE_SIZE + TILE_SIZE / 2;
+            const burgerCenterY = burger.y * TILE_SIZE + TILE_SIZE / 2;
+            if (burgerImg.complete && burgerImg.naturalWidth > 0) {
+                const aspect = burgerImg.naturalWidth / burgerImg.naturalHeight;
+                const drawH = TILE_SIZE * 1.35;
+                const drawW = drawH * aspect;
+                ctx.drawImage(
+                    burgerImg,
+                    burgerCenterX - drawW / 2,
+                    burgerCenterY - drawH / 2,
+                    drawW,
+                    drawH
+                );
+            } else {
+                ctx.fillStyle = '#f5a623';
+                ctx.beginPath();
+                ctx.arc(burgerCenterX, burgerCenterY, TILE_SIZE * 0.4, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // 3. Maroon body squares
+            for (let i = snake.length - 1; i >= 1; i--) {
+                const seg = snake[i];
+                const pad = 2;
+                ctx.fillStyle = i % 2 === 0 ? '#7a1c31' : '#5e1324';
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 1;
+
+                if (typeof ctx.roundRect === 'function') {
+                    ctx.beginPath();
+                    ctx.roundRect(
+                        seg.x * TILE_SIZE + pad,
+                        seg.y * TILE_SIZE + pad,
+                        TILE_SIZE - pad * 2,
+                        TILE_SIZE - pad * 2,
+                        6
+                    );
+                    ctx.fill();
+                    ctx.stroke();
+                } else {
+                    ctx.fillRect(
+                        seg.x * TILE_SIZE + pad,
+                        seg.y * TILE_SIZE + pad,
+                        TILE_SIZE - pad * 2,
+                        TILE_SIZE - pad * 2
+                    );
+                }
+            }
+
+            // 4. Bennet Speller Head (bs.png)
+            if (snake.length > 0) {
+                const head = snake[0];
+                const headCenterX = head.x * TILE_SIZE + TILE_SIZE / 2;
+                const headCenterY = head.y * TILE_SIZE + TILE_SIZE / 2;
+                if (headImg.complete && headImg.naturalWidth > 0) {
+                    const aspect = headImg.naturalWidth / headImg.naturalHeight;
+                    const drawH = TILE_SIZE * 1.75;
+                    const drawW = drawH * aspect;
+                    ctx.drawImage(
+                        headImg,
+                        headCenterX - drawW / 2,
+                        headCenterY - drawH / 2 - 4,
+                        drawW,
+                        drawH
+                    );
+                } else {
+                    ctx.fillStyle = '#9e2440';
+                    ctx.fillRect(head.x * TILE_SIZE, head.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                }
+            }
+        }
+
+        function endGame() {
+            isGameRunning = false;
+            clearInterval(gameLoop);
+            document.getElementById('overlay-title').textContent = 'Game Over!';
+            document.getElementById('overlay-subtitle').textContent = `Bennet ate ${score} burger${score === 1 ? '' : 's'}!`;
+            document.querySelector('#game-overlay .snake-btn').textContent = 'Play Again';
+            document.getElementById('game-overlay').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
