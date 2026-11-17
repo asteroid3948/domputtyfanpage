@@ -9,308 +9,75 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    :root { color-scheme: dark; --wine:#8f2945; --pink:#ff7897; --panel:#171214; --muted:#b9aeb1; --line:#39272d; --gold:#ffd166; }
-    * { box-sizing:border-box; margin:0; padding:0; }
-    body { min-height:100vh; background:#0b090a; color:#fff; font-family:Poppins, sans-serif; overflow-x:hidden; }
-    #snow-canvas { position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:0; }
-    .page { position:relative; z-index:1; width:min(1100px,100%); margin:auto; padding:30px 20px 70px; }
-    .site-header { text-align:center; padding:25px 0 35px; }
-    .logo { position:fixed; z-index:2; width:68px; height:68px; top:16px; left:16px; object-fit:cover; border-radius:50%; border:2px solid white; }
-    h1 { font-size:clamp(2rem,7vw,4rem); line-height:1.1; text-transform:uppercase; letter-spacing:2px; text-shadow:0 0 22px #ffffff50; }
-    .intro { color:#ded6d8; margin:12px auto 0; max-width:650px; line-height:1.7; }
-    .mention { display:flex; align-items:center; justify-content:center; gap:18px; margin:20px auto 32px; padding:18px; max-width:580px; border-block:1px solid var(--line); }
-    .mention img { width:82px; height:82px; object-fit:cover; border-radius:14px; border:2px solid #fff; }
-    .mention p { color:var(--muted); font-size:.9rem; }
-    .game { background:linear-gradient(145deg,#191315,#100d0e); border:1px solid #5b303c; border-radius:24px; box-shadow:0 16px 55px #0009,0 0 30px #8f29451f; overflow:hidden; }
-    .game-top { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:14px; padding:20px 24px; background:#21171a; border-bottom:1px solid var(--line); }
-    .brand h2 { font-size:1.35rem; }
-    .brand p { color:var(--muted); font-size:.84rem; }
-    .wallet { display:flex; flex-wrap:wrap; gap:9px; }
-    .pill { padding:8px 12px; border:1px solid #50343d; border-radius:999px; background:#120f10; font-size:.9rem; font-weight:700; white-space:nowrap; }
-    .pill strong { color:var(--gold); }
-    .game-grid { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr); gap:20px; padding:20px; }
-    .panel { background:#100e0f; border:1px solid var(--line); border-radius:17px; padding:18px; }
-    .pet-panel { display:flex; flex-direction:column; gap:16px; }
-    .pet-scene { min-height:270px; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; border-radius:14px; background:radial-gradient(ellipse at 50% 80%,#572332 0,#25171b 42%,#161214 76%); }
-    .pet-scene::after { content:""; position:absolute; width:220px; height:22px; bottom:25px; border-radius:50%; background:#0008; filter:blur(8px); }
-    .pet-image { position:relative; z-index:1; width:min(58%,220px); height:230px; object-fit:contain; filter:drop-shadow(0 8px 12px #0008); }
-    .food-fly { position:absolute; z-index:2; width:74px; height:74px; object-fit:contain; right:14%; bottom:22%; opacity:0; transform:translateX(65px) scale(.6) rotate(25deg); }
-    .pet-scene.feeding .food-fly { animation:feed 1.1s ease-in-out; }
-    @keyframes feed { 15%{opacity:1} 75%{opacity:1;transform:translateX(-85px) translateY(-10px) scale(.75) rotate(-8deg)} 100%{opacity:0;transform:translateX(-92px) scale(.2)} }
-    .pet-label { position:absolute; z-index:2; top:13px; left:14px; background:#110e10c9; border:1px solid #ffffff24; border-radius:999px; padding:7px 11px; font-size:.8rem; font-weight:700; }
-    .pet-status { display:flex; justify-content:space-between; gap:8px; align-items:center; color:var(--muted); font-size:.86rem; }
-    .bar-row { display:grid; grid-template-columns:92px 1fr 38px; gap:9px; align-items:center; margin:11px 0; font-size:.82rem; }
-    .bar { height:11px; border-radius:99px; overflow:hidden; background:#30272a; }
-    .bar-fill { height:100%; width:50%; border-radius:inherit; background:linear-gradient(90deg,#9c2948,#ff7897); transition:width .25s ease; }
-    .bar-fill.good { background:linear-gradient(90deg,#368f66,#80e3ae); }
-    .bar-fill.warn { background:linear-gradient(90deg,#ba7626,#ffd166); }
-    .bar-fill.bad { background:linear-gradient(90deg,#9e2934,#ff6670); }
-    .bar-value { text-align:right; color:#eee; }
-    .right-column { display:flex; flex-direction:column; gap:16px; }
-    .level-head { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:10px; }
-    .level-head h3,.panel h3 { font-size:1.05rem; }
-    .level-name { font-size:.82rem; color:var(--pink); font-weight:700; }
-    .xp-copy { display:flex; justify-content:space-between; color:var(--muted); font-size:.78rem; margin-top:7px; }
-    .xp-bar .bar-fill { background:linear-gradient(90deg,#d3902e,#ffe28b); }
-    .actions { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:12px; }
-    button { font:inherit; }
-    .action,.secondary,.shop-buy { border:1px solid #693443; background:linear-gradient(135deg,#702239,#461522); color:white; border-radius:11px; padding:11px 10px; font-weight:700; cursor:pointer; transition:transform .15s,filter .15s; }
-    .action:hover,.secondary:hover,.shop-buy:hover { transform:translateY(-2px); filter:brightness(1.16); }
-    .action small { display:block; font-weight:500; color:#f0cbd4; font-size:.7rem; margin-top:3px; }
-    .secondary { background:#20191b; border-color:#49363b; }
-    button:disabled { opacity:.45; cursor:not-allowed; transform:none!important; filter:none!important; }
-    .button-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
-    .button-row button { flex:1; min-width:120px; }
-    .section-heading { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:11px; }
-    .subtle { color:var(--muted); font-size:.78rem; line-height:1.5; }
-    .inventory { display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; }
-    .item-chip { display:flex; align-items:center; gap:5px; background:#21191c; border:1px solid #463238; border-radius:9px; padding:6px 9px; font-size:.76rem; }
-    .item-chip b { color:var(--gold); }
-    .shop-list { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
-    .shop-item { display:flex; justify-content:space-between; align-items:center; gap:8px; border:1px solid #35272b; border-radius:11px; padding:9px; background:#171315; }
-    .shop-item .item-name { font-size:.8rem; font-weight:700; }
-    .shop-item .item-desc { color:var(--muted); font-size:.68rem; line-height:1.35; }
-    .shop-buy { padding:7px 9px; font-size:.75rem; white-space:nowrap; }
-    .goal-list { list-style:none; display:grid; gap:9px; margin-top:11px; }
-    .goal { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 10px; background:#171315; border:1px solid #35272b; border-radius:10px; font-size:.78rem; }
-    .goal.done { border-color:#387454; color:#a5e8bd; }
-    .goal button { padding:5px 8px; border-radius:8px; border:1px solid #755b2f; color:#ffe29a; background:#332713; font-size:.7rem; font-weight:700; cursor:pointer; }
-    .log { max-height:135px; overflow:auto; display:flex; flex-direction:column; gap:7px; margin-top:11px; color:var(--muted); font-size:.75rem; text-align:left; }
-    .log p { border-left:2px solid #743347; padding-left:8px; }
-    .toast { position:fixed; z-index:10; bottom:20px; left:50%; transform:translate(-50%,20px); opacity:0; pointer-events:none; background:#f6e4e9; color:#241116; border-radius:12px; padding:11px 16px; font-size:.85rem; font-weight:700; box-shadow:0 8px 25px #0008; transition:.2s; max-width:90vw; text-align:center; }
-    .toast.show { opacity:1; transform:translate(-50%,0); }
-    .modal { display:none; position:fixed; z-index:20; inset:0; background:#080607e8; align-items:center; justify-content:center; padding:18px; }
-    .modal.show { display:flex; }
-    .modal-card { width:min(430px,100%); background:#1b1416; border:1px solid #7d354a; border-radius:18px; padding:24px; text-align:center; box-shadow:0 20px 70px #000; }
-    .modal-card h2 { margin-bottom:9px; }
-    .modal-card p { color:var(--muted); font-size:.9rem; line-height:1.6; margin-bottom:16px; }
-    footer { color:#8f8588; text-align:center; padding:24px 0 0; font-size:.75rem; }
-    @media(max-width:780px) { .game-grid{grid-template-columns:1fr;padding:13px}.page{padding-inline:12px}.logo{width:50px;height:50px}.pet-scene{min-height:230px}.game-top{padding:16px}.mention{margin-top:12px} }
-    @media(max-width:430px) { .shop-list{grid-template-columns:1fr}.actions{grid-template-columns:1fr 1fr}.wallet{gap:6px}.pill{font-size:.77rem;padding:7px 9px}.bar-row{grid-template-columns:78px 1fr 34px}.pet-image{height:200px} }
+    :root{color-scheme:dark;--wine:#8f2945;--pink:#ff7897;--muted:#b9aeb1;--line:#39272d;--gold:#ffd166}
+    *{box-sizing:border-box;margin:0;padding:0}body{min-height:100vh;background:#0b090a;color:#fff;font-family:Poppins,sans-serif;overflow-x:hidden}
+    #snow-canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}.page{position:relative;z-index:1;width:min(1100px,100%);margin:auto;padding:30px 20px 70px}.site-header{text-align:center;padding:25px 0 35px}.logo{position:fixed;z-index:2;width:68px;height:68px;top:16px;left:16px;object-fit:cover;border-radius:50%;border:2px solid white}h1{font-size:clamp(2rem,7vw,4rem);line-height:1.1;text-transform:uppercase;letter-spacing:2px;text-shadow:0 0 22px #ffffff50}.intro{color:#ded6d8;margin:12px auto 0;max-width:650px;line-height:1.7}.mention{display:flex;align-items:center;justify-content:center;gap:18px;margin:20px auto 32px;padding:18px;max-width:580px;border-block:1px solid var(--line)}.mention img{width:82px;height:82px;object-fit:cover;border-radius:14px;border:2px solid #fff}.mention p{color:var(--muted);font-size:.9rem}.game{background:linear-gradient(145deg,#191315,#100d0e);border:1px solid #5b303c;border-radius:24px;box-shadow:0 16px 55px #0009,0 0 30px #8f29451f;overflow:hidden}.game-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;padding:20px 24px;background:#21171a;border-bottom:1px solid var(--line)}.brand h2{font-size:1.35rem}.brand p{color:var(--muted);font-size:.84rem}.wallet{display:flex;flex-wrap:wrap;gap:9px}.pill{padding:8px 12px;border:1px solid #50343d;border-radius:999px;background:#120f10;font-size:.9rem;font-weight:700;white-space:nowrap}.pill strong{color:var(--gold)}.game-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr);gap:20px;padding:20px}.panel{background:#100e0f;border:1px solid var(--line);border-radius:17px;padding:18px}.pet-panel{display:flex;flex-direction:column;gap:16px}.pet-scene{min-height:270px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;border-radius:14px;background:radial-gradient(ellipse at 50% 80%,#572332 0,#25171b 42%,#161214 76%)}.pet-scene:after{content:"";position:absolute;width:260px;height:22px;bottom:25px;border-radius:50%;background:#0008;filter:blur(8px)}.pet-image{position:relative;z-index:1;width:min(58%,220px);height:230px;object-fit:contain;filter:drop-shadow(0 8px 12px #0008);transform:scale(var(--pet-size,1));transform-origin:center bottom;transition:transform .4s ease,filter .4s}.pet-scene.overstuffed .pet-image{filter:drop-shadow(0 0 14px #ff789766)}.food-fly{position:absolute;z-index:2;width:74px;height:74px;object-fit:contain;right:14%;bottom:22%;opacity:0;transform:translateX(65px) scale(.6) rotate(25deg)}.pet-scene.feeding .food-fly{animation:feed 1.1s ease-in-out}@keyframes feed{15%{opacity:1}75%{opacity:1;transform:translateX(-85px) translateY(-10px) scale(.75) rotate(-8deg)}100%{opacity:0;transform:translateX(-92px) scale(.2)}}.pet-label{position:absolute;z-index:2;top:13px;left:14px;background:#110e10c9;border:1px solid #ffffff24;border-radius:999px;padding:7px 11px;font-size:.8rem;font-weight:700}.pet-status{display:flex;justify-content:space-between;gap:8px;align-items:center;color:var(--muted);font-size:.86rem}.bar-row{display:grid;grid-template-columns:92px 1fr 38px;gap:9px;align-items:center;margin:11px 0;font-size:.82rem}.bar{height:11px;border-radius:99px;overflow:hidden;background:#30272a}.bar-fill{height:100%;width:50%;border-radius:inherit;background:linear-gradient(90deg,#9c2948,#ff7897);transition:width .25s}.bar-fill.good{background:linear-gradient(90deg,#368f66,#80e3ae)}.bar-fill.warn{background:linear-gradient(90deg,#ba7626,#ffd166)}.bar-fill.bad{background:linear-gradient(90deg,#9e2934,#ff6670)}.bar-value{text-align:right;color:#eee}.right-column{display:flex;flex-direction:column;gap:16px}.level-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}.level-head h3,.panel h3{font-size:1.05rem}.level-name{font-size:.82rem;color:var(--pink);font-weight:700}.xp-copy{display:flex;justify-content:space-between;color:var(--muted);font-size:.78rem;margin-top:7px}.xp-bar .bar-fill{background:linear-gradient(90deg,#d3902e,#ffe28b)}.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}button{font:inherit}.action,.secondary,.shop-buy{border:1px solid #693443;background:linear-gradient(135deg,#702239,#461522);color:white;border-radius:11px;padding:11px 10px;font-weight:700;cursor:pointer;transition:transform .15s,filter .15s}.action:hover,.secondary:hover,.shop-buy:hover{transform:translateY(-2px);filter:brightness(1.16)}.action small{display:block;font-weight:500;color:#f0cbd4;font-size:.7rem;margin-top:3px}.secondary{background:#20191b;border-color:#49363b}button:disabled{opacity:.45;cursor:not-allowed;transform:none!important;filter:none!important}.button-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.button-row button{flex:1;min-width:120px}.section-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:11px}.subtle{color:var(--muted);font-size:.78rem;line-height:1.5}.inventory{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.item-chip{display:flex;align-items:center;gap:5px;background:#21191c;border:1px solid #463238;border-radius:9px;padding:6px 9px;font-size:.76rem}.item-chip b{color:var(--gold)}.shop-list{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.shop-item{display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid #35272b;border-radius:11px;padding:9px;background:#171315}.item-name{font-size:.8rem;font-weight:700}.item-desc{color:var(--muted);font-size:.68rem;line-height:1.35}.shop-buy{padding:7px 9px;font-size:.75rem;white-space:nowrap}.goal-list{list-style:none;display:grid;gap:9px;margin-top:11px}.goal{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 10px;background:#171315;border:1px solid #35272b;border-radius:10px;font-size:.78rem}.goal.done{border-color:#387454;color:#a5e8bd}.goal button{padding:5px 8px;border-radius:8px;border:1px solid #755b2f;color:#ffe29a;background:#332713;font-size:.7rem;font-weight:700;cursor:pointer}.log{max-height:135px;overflow:auto;display:flex;flex-direction:column;gap:7px;margin-top:11px;color:var(--muted);font-size:.75rem;text-align:left}.log p{border-left:2px solid #743347;padding-left:8px}.toast{position:fixed;z-index:10;bottom:20px;left:50%;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#f6e4e9;color:#241116;border-radius:12px;padding:11px 16px;font-size:.85rem;font-weight:700;box-shadow:0 8px 25px #0008;transition:.2s;max-width:90vw;text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}.modal{display:none;position:fixed;z-index:20;inset:0;background:#080607e8;align-items:center;justify-content:center;padding:18px}.modal.show{display:flex}.modal-card{width:min(430px,100%);background:#1b1416;border:1px solid #7d354a;border-radius:18px;padding:24px;text-align:center;box-shadow:0 20px 70px #000}.modal-card h2{margin-bottom:9px}.modal-card p{color:var(--muted);font-size:.9rem;line-height:1.6;margin-bottom:16px}footer{color:#8f8588;text-align:center;padding:24px 0 0;font-size:.75rem}
+    @media(max-width:780px){.game-grid{grid-template-columns:1fr;padding:13px}.page{padding-inline:12px}.logo{width:50px;height:50px}.pet-scene{min-height:230px}.game-top{padding:16px}.mention{margin-top:12px}}@media(max-width:430px){.shop-list{grid-template-columns:1fr}.actions{grid-template-columns:1fr 1fr}.wallet{gap:6px}.pill{font-size:.77rem;padding:7px 9px}.bar-row{grid-template-columns:78px 1fr 34px}.pet-image{height:200px}}
   </style>
 </head>
 <body>
-  <canvas id="snow-canvas" aria-hidden="true"></canvas>
-  <img src="ss.jpeg" alt="Dom Putty logo" class="logo">
+  <canvas id="snow-canvas" aria-hidden="true"></canvas><img src="ss.jpeg" alt="Dom Putty logo" class="logo">
   <main class="page">
-    <header class="site-header">
-      <h1>Dom Putty Fanpage</h1>
-      <p class="intro">Dom Putty is the best person of all time, he's so small and he's great at football. Welcome to Bennett's Big Life: raise, feed and look after Bennett Speller!</p>
-    </header>
-    <aside class="mention">
-      <img src="unnamed.jpg" alt="Charlie Rosenberg">
-      <div><strong>Honorary Mention: Charlie Rosenberg</strong><p>A little appreciation from the fanpage.</p></div>
-    </aside>
-
+    <header class="site-header"><h1>Dom Putty Fanpage</h1><p class="intro">Dom Putty is the best person of all time, he's so small and he's great at football. Welcome to Bennett's Big Life: raise, feed and look after Bennett Speller!</p></header>
+    <aside class="mention"><img src="unnamed.jpg" alt="Charlie Rosenberg"><div><strong>Honorary Mention: Charlie Rosenberg</strong><p>A little appreciation from the fanpage.</p></div></aside>
     <section class="game" aria-label="Bennett Speller life simulator">
-      <header class="game-top">
-        <div class="brand"><h2>🐾 Bennett's Big Life</h2><p>Keep him thriving. Every day brings new goals.</p></div>
-        <div class="wallet" aria-live="polite">
-          <span class="pill">🪙 <strong id="money">0</strong> Putty Coins</span>
-          <span class="pill">⭐ Score <strong id="score">0</strong></span>
-          <span class="pill">📅 Day <strong id="day">1</strong></span>
-        </div>
-      </header>
-
+      <header class="game-top"><div class="brand"><h2>🐾 Bennett's Big Life</h2><p>Keep him thriving. Every day brings new goals.</p></div><div class="wallet" aria-live="polite"><span class="pill">🪙 <strong id="money">0</strong> Putty Coins</span><span class="pill">⭐ Score <strong id="score">0</strong></span><span class="pill">📅 Day <strong id="day">1</strong></span></div></header>
       <div class="game-grid">
         <section class="panel pet-panel">
-          <div class="pet-scene" id="pet-scene">
-            <span class="pet-label" id="pet-label">Level 1 · New Arrival</span>
-            <img class="pet-image" src="bs.png" alt="Bennett Speller">
-            <img class="food-fly" id="food-fly" src="burger.png" alt="Burger treat">
-          </div>
+          <div class="pet-scene" id="pet-scene"><span class="pet-label" id="pet-label">Level 1 · New Arrival</span><img class="pet-image" id="pet-image" src="bs.png" alt="Bennett Speller"><img class="food-fly" id="food-fly" src="burger.png" alt="Burger treat"></div>
           <div class="pet-status"><strong id="mood-line">Bennett is settling in.</strong><span id="clock">00:00</span></div>
           <div id="stats">
-            <div class="bar-row"><span>🍔 Hunger</span><div class="bar"><div class="bar-fill" id="hunger-bar"></div></div><span class="bar-value" id="hunger-value"></span></div>
+            <div class="bar-row"><span>🍔 Fullness</span><div class="bar"><div class="bar-fill" id="hunger-bar"></div></div><span class="bar-value" id="hunger-value"></span></div>
+            <div class="bar-row"><span>⚖️ Weight</span><div class="bar"><div class="bar-fill" id="weight-bar"></div></div><span class="bar-value" id="weight-value"></span></div>
             <div class="bar-row"><span>💖 Happiness</span><div class="bar"><div class="bar-fill" id="happiness-bar"></div></div><span class="bar-value" id="happiness-value"></span></div>
             <div class="bar-row"><span>⚡ Energy</span><div class="bar"><div class="bar-fill" id="energy-bar"></div></div><span class="bar-value" id="energy-value"></span></div>
             <div class="bar-row"><span>🧼 Cleanliness</span><div class="bar"><div class="bar-fill" id="clean-bar"></div></div><span class="bar-value" id="clean-value"></span></div>
             <div class="bar-row"><span>🩺 Health</span><div class="bar"><div class="bar-fill" id="health-bar"></div></div><span class="bar-value" id="health-value"></span></div>
           </div>
-          <div class="panel" style="padding:14px">
-            <div class="section-heading"><h3>🎒 Backpack</h3><span class="subtle">Use items to care for Bennett</span></div>
-            <div class="inventory" id="inventory"></div>
-          </div>
+          <div class="panel" style="padding:14px"><div class="section-heading"><h3>🎒 Backpack</h3><span class="subtle">Use items to care for Bennett</span></div><div class="inventory" id="inventory"></div></div>
         </section>
-
         <div class="right-column">
-          <section class="panel">
-            <div class="level-head"><div><h3>🌟 Growth & Progress</h3><span class="level-name" id="level-name">New Arrival</span></div><strong>Level <span id="level">1</span></strong></div>
-            <div class="bar xp-bar"><div class="bar-fill" id="xp-bar"></div></div>
-            <div class="xp-copy"><span id="xp-current">0 XP</span><span id="xp-needed">100 XP to next level</span></div>
-            <div class="button-row"><button class="secondary" id="work-button" type="button">💼 Do a gig <small>(earns coins)</small></button><button class="secondary" id="clinic-button" type="button">🏥 Visit clinic <small>30 coins</small></button></div>
-          </section>
-
-          <section class="panel">
-            <div class="section-heading"><h3>🤲 Care for Bennett</h3><span class="subtle">Needs change over time!</span></div>
-            <div class="actions">
-              <button class="action" id="feed-button" type="button">🍔 Feed burger<small>Uses 1 burger</small></button>
-              <button class="action" id="play-button" type="button">🎾 Play together<small>Costs energy</small></button>
-              <button class="action" id="rest-button" type="button">😴 Take a nap<small>Restores energy</small></button>
-              <button class="action" id="clean-button" type="button">🧽 Clean up<small>Free care action</small></button>
-            </div>
-          </section>
-
-          <section class="panel">
-            <div class="section-heading"><h3>🛍️ Putty's Supply Shop</h3><span class="subtle">Spend coins wisely</span></div>
-            <div class="shop-list" id="shop-list"></div>
-          </section>
-
-          <section class="panel">
-            <div class="section-heading"><h3>📋 Daily goals</h3><span class="subtle">Refresh every 15 game minutes</span></div>
-            <p class="subtle">Finish goals for bonus coins and XP. Keep an eye on Bennett while you earn!</p>
-            <ul class="goal-list" id="goal-list"></ul>
-          </section>
-
-          <section class="panel">
-            <div class="section-heading"><h3>📖 Bennett's Journal</h3><span class="subtle">Recent events</span></div>
-            <div class="log" id="journal" aria-live="polite"></div>
-          </section>
+          <section class="panel"><div class="level-head"><div><h3>🌟 Growth & Progress</h3><span class="level-name" id="level-name">New Arrival</span></div><strong>Level <span id="level">1</span></strong></div><div class="bar xp-bar"><div class="bar-fill" id="xp-bar"></div></div><div class="xp-copy"><span id="xp-current">0 XP</span><span id="xp-needed">100 XP to next level</span></div><div class="button-row"><button class="secondary" id="work-button" type="button">💼 Do a gig <small>(earns coins)</small></button><button class="secondary" id="clinic-button" type="button">🏥 Visit clinic <small>30 coins</small></button></div></section>
+          <section class="panel"><div class="section-heading"><h3>🤲 Care for Bennett</h3><span class="subtle">Needs change over time!</span></div><div class="actions"><button class="action" id="feed-button" type="button">🍔 Feed burger<small>Uses 1 burger</small></button><button class="action" id="play-button" type="button">🎾 Play together<small>Costs energy; helps manage weight</small></button><button class="action" id="rest-button" type="button">😴 Take a nap<small>Restores energy</small></button><button class="action" id="clean-button" type="button">🧽 Clean up<small>Free care action</small></button></div></section>
+          <section class="panel"><div class="section-heading"><h3>🛍️ Putty's Supply Shop</h3><span class="subtle">Spend coins wisely</span></div><div class="shop-list" id="shop-list"></div></section>
+          <section class="panel"><div class="section-heading"><h3>📋 Daily goals</h3><span class="subtle">Refresh every 15 game minutes</span></div><p class="subtle">Finish goals for bonus coins and XP. Keep an eye on Bennett while you earn!</p><ul class="goal-list" id="goal-list"></ul></section>
+          <section class="panel"><div class="section-heading"><h3>📖 Bennett's Journal</h3><span class="subtle">Recent events</span></div><div class="log" id="journal" aria-live="polite"></div></section>
         </div>
       </div>
     </section>
-    <footer>Game progress saves in this browser. Bennett's needs continue to change while you play.</footer>
+    <footer>Progress saves in this browser. Feed Bennett when he is hungry, and balance treats with play and exercise.</footer>
   </main>
-
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <div class="modal" id="gameover-modal" role="dialog" aria-modal="true" aria-labelledby="gameover-title">
-    <div class="modal-card"><h2 id="gameover-title">Bennett needs urgent care!</h2><p id="gameover-copy">His health ran out. Use the clinic to bring him back, or start a fresh run.</p><div class="button-row"><button class="action" id="revive-button" type="button">🚑 Emergency care · 80 coins</button><button class="secondary" id="restart-button" type="button">Start fresh</button></div></div>
-  </div>
-
+  <div class="modal" id="gameover-modal" role="dialog" aria-modal="true" aria-labelledby="gameover-title"><div class="modal-card"><h2 id="gameover-title">Bennett needs urgent care!</h2><p id="gameover-copy">His health ran out. Use emergency care to help him recover, or start a fresh run.</p><div class="button-row"><button class="action" id="revive-button" type="button">🚑 Emergency care · 80 coins</button><button class="secondary" id="restart-button" type="button">Start fresh</button></div></div></div>
   <script>
-    // Gentle snow backdrop.
-    const snowCanvas = document.getElementById('snow-canvas');
-    const snowCtx = snowCanvas.getContext('2d');
-    let snowWidth = snowCanvas.width = window.innerWidth;
-    let snowHeight = snowCanvas.height = window.innerHeight;
-    const flakes = Array.from({ length: 95 }, () => ({ x: Math.random() * snowWidth, y: Math.random() * snowHeight, r: Math.random() * 2.6 + .7, dy: Math.random() * 1.2 + .35, dx: Math.random() * .7 - .35 }));
-    window.addEventListener('resize', () => { snowWidth = snowCanvas.width = window.innerWidth; snowHeight = snowCanvas.height = window.innerHeight; });
-    function drawSnow() {
-      snowCtx.clearRect(0, 0, snowWidth, snowHeight); snowCtx.fillStyle = '#fff'; snowCtx.beginPath();
-      flakes.forEach(f => { snowCtx.moveTo(f.x, f.y); snowCtx.arc(f.x, f.y, f.r, 0, Math.PI * 2); f.y += f.dy; f.x += f.dx; if (f.y > snowHeight) { f.y = -f.r; f.x = Math.random() * snowWidth; } if (f.x < 0) f.x = snowWidth; if (f.x > snowWidth) f.x = 0; });
-      snowCtx.fill(); requestAnimationFrame(drawSnow);
-    }
-    drawSnow();
-
-    const SAVE_KEY = 'bennettBigLifeSave_v1';
-    const itemData = {
-      burger: { name: 'Burger', icon: '🍔', price: 8, desc: 'Fills hunger +32', effect: 'hunger' },
-      treat: { name: 'Treat', icon: '🦴', price: 15, desc: 'Happiness +20', effect: 'happiness' },
-      juice: { name: 'Juice', icon: '🧃', price: 11, desc: 'Energy +22', effect: 'energy' },
-      soap: { name: 'Soap kit', icon: '🧼', price: 12, desc: 'Cleanliness +35', effect: 'clean' },
-      medicine: { name: 'Medicine', icon: '💊', price: 28, desc: 'Health +28', effect: 'health' },
-      toy: { name: 'Deluxe toy', icon: '🧸', price: 45, desc: 'Happiness +40', effect: 'toy' }
-    };
-    const freshState = () => ({ money: 45, score: 0, bestScore: 0, day: 1, elapsed: 0, level: 1, xp: 0, hunger: 78, happiness: 78, energy: 82, clean: 80, health: 100, inventory: { burger: 2, treat: 1, juice: 0, soap: 0, medicine: 0, toy: 0 }, goals: { feed: 0, play: 0, work: 0, claimed: [] }, log: ['Bennett arrived at his new home! Make him feel welcome.'], dead: false, lastWork: 0 });
-    let state = freshState();
-    try { const saved = JSON.parse(localStorage.getItem(SAVE_KEY)); if (saved && saved.level && saved.inventory) state = { ...freshState(), ...saved, inventory: { ...freshState().inventory, ...saved.inventory }, goals: { ...freshState().goals, ...saved.goals } }; } catch (e) { /* Start a new save if storage is unavailable or invalid. */ }
-
-    const $ = id => document.getElementById(id);
-    const clamp = n => Math.max(0, Math.min(100, n));
-    let toastTimer;
-    function notify(message) { const el = $('toast'); el.textContent = message; el.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 2400); }
-    function save() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); } catch (e) { /* The game remains playable if browser storage is disabled. */ } }
-    function addLog(message) { state.log.unshift(message); state.log = state.log.slice(0, 12); }
-    function xpForNext() { return 100 + (state.level - 1) * 35; }
-    function levelTitle(level) { if (level >= 25) return 'Local Legend'; if (level >= 18) return 'Big-Time Bennett'; if (level >= 12) return 'Community Star'; if (level >= 7) return 'Rising Speller'; if (level >= 3) return 'Growing Up'; return 'New Arrival'; }
-    function addXP(amount) {
-      state.xp += amount;
-      while (state.xp >= xpForNext()) { state.xp -= xpForNext(); state.level++; state.money += 20 + state.level * 2; state.health = clamp(state.health + 12); addLog(`Level up! Bennett reached level ${state.level}; bonus coins and health restored.`); notify(`Level ${state.level}! +${20 + state.level * 2} coins and +12 health`); }
-    }
-    function goalProgress(key) { return state.goals[key]; }
-    function markGoal(key) { state.goals[key] = (state.goals[key] || 0) + 1; }
-    function claimGoal(key, limit, label) {
-      if (state.goals[key] >= limit && !state.goals.claimed.includes(key)) { state.goals.claimed.push(key); state.money += 18; addXP(22); state.score += 25; addLog(`Daily goal complete: ${label}. Earned 18 coins and 22 XP.`); notify(`Goal complete! +18 coins, +22 XP`); }
-    }
-    function updateGoals() {
-      const goals = [ ['feed',3,'Feed Bennett 3 times','feed'], ['play',2,'Play together 2 times','play'], ['work',2,'Finish 2 gigs','work'] ];
-      $('goal-list').innerHTML = goals.map(([key,target,label]) => {
-        const done = state.goals[key] >= target;
-        const claimed = state.goals.claimed.includes(key);
-        return `<li class="goal ${claimed ? 'done' : ''}"><span>${claimed ? '✅' : '🎯'} ${label} <strong>${Math.min(state.goals[key],target)}/${target}</strong></span>${done && !claimed ? `<button type="button" data-claim="${key}" data-label="${label}">Claim reward</button>` : claimed ? '<span>Claimed</span>' : '<span>+18 🪙</span>'}</li>`;
-      }).join('');
-      document.querySelectorAll('[data-claim]').forEach(button => button.addEventListener('click', () => claimGoal(button.dataset.claim, Number(button.dataset.claim === 'feed' ? 3 : 2), button.dataset.label)));
-    }
-    function renderShop() {
-      $('shop-list').innerHTML = Object.entries(itemData).map(([key,item]) => `<div class="shop-item"><div><div class="item-name">${item.icon} ${item.name}</div><div class="item-desc">${item.desc}</div></div><button class="shop-buy" type="button" data-buy="${key}">${item.price} 🪙</button></div>`).join('');
-      document.querySelectorAll('[data-buy]').forEach(button => button.addEventListener('click', () => buyItem(button.dataset.buy)));
-    }
-    function render() {
-      $('money').textContent = Math.floor(state.money); $('score').textContent = state.score; $('day').textContent = state.day;
-      $('level').textContent = state.level; $('level-name').textContent = levelTitle(state.level); $('pet-label').textContent = `Level ${state.level} · ${levelTitle(state.level)}`;
-      const need = xpForNext(); $('xp-bar').style.width = `${Math.min(100, state.xp / need * 100)}%`; $('xp-current').textContent = `${state.xp} XP`; $('xp-needed').textContent = `${need - state.xp} XP to next level`;
-      const bars = [['hunger','hunger'],['happiness','happiness'],['energy','energy'],['clean','clean'],['health','health']];
-      bars.forEach(([key,id]) => { const val = Math.round(state[key]); const bar = $(`${id}-bar`); bar.style.width = `${val}%`; bar.className = `bar-fill ${val > 60 ? 'good' : val > 30 ? 'warn' : 'bad'}`; $(`${id}-value`).textContent = `${val}%`; });
-      const lowest = Math.min(state.hunger,state.happiness,state.energy,state.clean,state.health);
-      $('mood-line').textContent = state.dead ? 'Bennett needs emergency care.' : lowest < 25 ? 'Bennett is having a rough time!' : lowest < 50 ? 'Bennett could use some attention.' : 'Bennett is doing pretty well!';
-      $('clock').textContent = `${String(Math.floor(state.elapsed / 60)).padStart(2,'0')}:${String(state.elapsed % 60).padStart(2,'0')}`;
-      $('inventory').innerHTML = Object.entries(itemData).map(([key,item]) => `<span class="item-chip">${item.icon} ${item.name} <b>×${state.inventory[key] || 0}</b></span>`).join('');
-      $('feed-button').disabled = state.dead || state.inventory.burger < 1; $('play-button').disabled = state.dead || state.energy < 12; $('rest-button').disabled = state.dead || state.energy >= 96; $('clean-button').disabled = state.dead || state.clean >= 96;
-      $('work-button').disabled = state.dead || Date.now() < state.lastWork + 20000; $('clinic-button').disabled = state.dead || state.money < 30 || state.health >= 96;
-      $('gameover-modal').classList.toggle('show', state.dead); $('revive-button').disabled = state.money < 80;
-      updateGoals(); $('journal').innerHTML = state.log.map(line => `<p>${escapeHtml(line)}</p>`).join('');
-      save();
-    }
-    function escapeHtml(text) { const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
-    function careAction(message, xp, points) { addXP(xp); state.score += points; state.bestScore = Math.max(state.bestScore,state.score); addLog(message); render(); }
-    function animateFeed() { const scene = $('pet-scene'); scene.classList.remove('feeding'); void scene.offsetWidth; scene.classList.add('feeding'); setTimeout(() => scene.classList.remove('feeding'),1200); }
-    function useItem(key) {
-      if (state.dead || !state.inventory[key]) return;
-      const gains = { burger: {hunger:32}, treat:{happiness:20}, juice:{energy:22}, soap:{clean:35}, medicine:{health:28}, toy:{happiness:40} }[key];
-      state.inventory[key]--;
-      for (const [stat,amount] of Object.entries(gains)) state[stat] = clamp(state[stat] + amount);
-      if (key === 'burger') { state.happiness = clamp(state.happiness + 3); markGoal('feed'); claimGoal('feed',3,'Feed Bennett 3 times'); animateFeed(); }
-      careAction(`${itemData[key].name} used. Bennett feels a little better.`, key === 'toy' ? 8 : 5, 10);
-      notify(`${itemData[key].name} used!`);
-    }
-    function buyItem(key) {
-      const item = itemData[key]; if (!item || state.dead) return;
-      if (state.money < item.price) { notify('Not enough Putty Coins. Do a gig to earn more!'); return; }
-      state.money -= item.price; state.inventory[key]++; state.score += 2; addLog(`Bought ${item.name} for ${item.price} coins.`); render(); notify(`${item.name} added to your backpack.`);
-    }
-    function play() {
-      if (state.dead || state.energy < 12) return;
-      state.energy -= 12; state.hunger = clamp(state.hunger - 5); state.happiness = clamp(state.happiness + 17); state.clean = clamp(state.clean - 3); markGoal('play'); claimGoal('play',2,'Play together 2 times'); careAction('You played together. Bennett is smiling, but a little tired.',9,15);
-    }
-    function rest() {
-      if (state.dead || state.energy >= 96) return;
-      state.energy = clamp(state.energy + 30); state.hunger = clamp(state.hunger - 5); state.clean = clamp(state.clean - 2); careAction('Bennett took a nap and recovered some energy.',4,7);
-    }
-    function cleanUp() {
-      if (state.dead || state.clean >= 96) return;
-      state.clean = clamp(state.clean + 32); state.happiness = clamp(state.happiness + 3); careAction('You tidied up. Bennett feels fresh again.',5,8);
-    }
-    function work() {
-      if (state.dead || Date.now() < state.lastWork + 20000) return;
-      const pay = 16 + Math.floor(Math.random() * 13); state.money += pay; state.lastWork = Date.now(); state.energy = clamp(state.energy - 11); state.hunger = clamp(state.hunger - 4); state.happiness = clamp(state.happiness - 2); markGoal('work'); claimGoal('work',2,'Finish 2 gigs'); careAction(`Gig finished! You earned ${pay} Putty Coins.`,13,20); notify(`Gig payout: +${pay} coins`);
-    }
-    function clinic() {
-      if (state.dead || state.money < 30 || state.health >= 96) return;
-      state.money -= 30; state.health = clamp(state.health + 35); state.happiness = clamp(state.happiness + 5); careAction('The clinic treated Bennett. Health restored by 35.',3,5); notify('Clinic visit complete.');
-    }
-    function tick() {
-      if (state.dead) return;
-      state.elapsed++;
-      if (state.elapsed % 60 === 0) {
-        state.hunger = clamp(state.hunger - 4.2); state.happiness = clamp(state.happiness - 1.5); state.energy = clamp(state.energy - 1.8); state.clean = clamp(state.clean - 2.2);
-        if (state.hunger < 22 || state.clean < 18 || state.happiness < 15) state.health = clamp(state.health - 3.5);
-        else if (state.hunger < 40 || state.clean < 35 || state.happiness < 30) state.health = clamp(state.health - 1.2);
-        else if (state.hunger > 65 && state.clean > 60 && state.happiness > 55) state.health = clamp(state.health + .6);
-        if (Math.min(state.hunger,state.happiness,state.energy,state.clean,state.health) > 50) { state.score++; state.bestScore = Math.max(state.bestScore,state.score); }
-      }
-      if (state.elapsed > 0 && state.elapsed % 900 === 0) {
-        state.day++; state.goals = { feed:0, play:0, work:0, claimed:[] }; state.money += 8; addLog(`A new day begins! Daily goals refreshed. Day ${state.day} allowance: 8 coins.`); notify(`Day ${state.day}! Daily goals refreshed (+8 coins)`);
-      }
-      if (state.health <= 0) { state.health = 0; state.dead = true; addLog('Bennett became too unwell and needs emergency care.'); }
-      render();
-    }
-    function revive() { if (state.money < 80) return; state.money -= 80; state.health = 45; state.hunger = Math.max(state.hunger,35); state.clean = Math.max(state.clean,35); state.dead = false; addLog('Emergency care brought Bennett back. Take extra care of him!'); notify('Bennett is recovering.'); render(); }
-    function restart() { const keep = { bestScore:Math.max(state.bestScore,state.score), level:state.level, money:Math.floor(state.money/2), score:state.score }; state = freshState(); state.bestScore=keep.bestScore; state.level=keep.level; state.money=keep.money; state.score=keep.score; state.xp=0; addLog('A fresh chapter begins. Your level and score were saved.'); render(); }
-
-    $('feed-button').addEventListener('click', () => useItem('burger'));
-    $('play-button').addEventListener('click', play); $('rest-button').addEventListener('click', rest); $('clean-button').addEventListener('click', cleanUp);
-    $('work-button').addEventListener('click', work); $('clinic-button').addEventListener('click', clinic); $('revive-button').addEventListener('click', revive); $('restart-button').addEventListener('click', restart);
-    render(); setInterval(tick,1000); setInterval(() => { $('work-button').disabled = state.dead || Date.now() < state.lastWork + 20000; },1000);
+    const snowCanvas=document.getElementById('snow-canvas'),snowCtx=snowCanvas.getContext('2d');let snowWidth=snowCanvas.width=innerWidth,snowHeight=snowCanvas.height=innerHeight;const flakes=Array.from({length:95},()=>({x:Math.random()*snowWidth,y:Math.random()*snowHeight,r:Math.random()*2.6+.7,dy:Math.random()*1.2+.35,dx:Math.random()*.7-.35}));addEventListener('resize',()=>{snowWidth=snowCanvas.width=innerWidth;snowHeight=snowCanvas.height=innerHeight});function drawSnow(){snowCtx.clearRect(0,0,snowWidth,snowHeight);snowCtx.fillStyle='#fff';snowCtx.beginPath();flakes.forEach(f=>{snowCtx.moveTo(f.x,f.y);snowCtx.arc(f.x,f.y,f.r,0,Math.PI*2);f.y+=f.dy;f.x+=f.dx;if(f.y>snowHeight){f.y=-f.r;f.x=Math.random()*snowWidth}if(f.x<0)f.x=snowWidth;if(f.x>snowWidth)f.x=0});snowCtx.fill();requestAnimationFrame(drawSnow)}drawSnow();
+    const SAVE_KEY='bennettBigLifeSave_v1';
+    const itemData={burger:{name:'Burger',icon:'🍔',price:8,desc:'Fills Bennett +32'},treat:{name:'Treat',icon:'🦴',price:15,desc:'Happiness +20'},juice:{name:'Juice',icon:'🧃',price:11,desc:'Energy +22'},soap:{name:'Soap kit',icon:'🧼',price:12,desc:'Cleanliness +35'},medicine:{name:'Medicine',icon:'💊',price:28,desc:'Health +28'},toy:{name:'Deluxe toy',icon:'🧸',price:45,desc:'Happiness +40'}};
+    const freshState=()=>({money:45,score:0,bestScore:0,day:1,elapsed:0,level:1,xp:0,hunger:78,weight:30,happiness:78,energy:82,clean:80,health:100,inventory:{burger:2,treat:1,juice:0,soap:0,medicine:0,toy:0},goals:{feed:0,play:0,work:0,claimed:[]},log:['Bennett arrived at his new home! Make him feel welcome.'],dead:false,lastWork:0});let state=freshState();try{const saved=JSON.parse(localStorage.getItem(SAVE_KEY));if(saved&&saved.level&&saved.inventory)state={...freshState(),...saved,weight:Number.isFinite(saved.weight)?saved.weight:30,inventory:{...freshState().inventory,...saved.inventory},goals:{...freshState().goals,...saved.goals}}}catch(e){}
+    const $=id=>document.getElementById(id),clamp=n=>Math.max(0,Math.min(100,n));let toastTimer;
+    function notify(message){const el=$('toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2500)}function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(state))}catch(e){}}function addLog(message){state.log.unshift(message);state.log=state.log.slice(0,12)}function xpForNext(){return 100+(state.level-1)*35}function levelTitle(level){if(level>=25)return'Local Legend';if(level>=18)return'Big-Time Bennett';if(level>=12)return'Community Star';if(level>=7)return'Rising Speller';if(level>=3)return'Growing Up';return'New Arrival'}
+    function addXP(amount){state.xp+=amount;while(state.xp>=xpForNext()){state.xp-=xpForNext();state.level++;state.money+=20+state.level*2;state.health=clamp(state.health+12);addLog(`Level up! Bennett reached level ${state.level}; bonus coins and health restored.`);notify(`Level ${state.level}! You earned a level-up bonus.`)}}
+    function markGoal(key){state.goals[key]=(state.goals[key]||0)+1}function claimGoal(key,limit,label){if(state.goals[key]>=limit&&!state.goals.claimed.includes(key)){state.goals.claimed.push(key);state.money+=18;addXP(22);state.score+=25;addLog(`Daily goal complete: ${label}. Earned 18 coins and 22 XP.`);notify('Goal complete! +18 coins, +22 XP')}}
+    function updateGoals(){const goals=[['feed',3,'Feed Bennett 3 times'],['play',2,'Play together 2 times'],['work',2,'Finish 2 gigs']];$('goal-list').innerHTML=goals.map(([key,target,label])=>{const done=state.goals[key]>=target,claimed=state.goals.claimed.includes(key);return `<li class="goal ${claimed?'done':''}"><span>${claimed?'✅':'🎯'} ${label} <strong>${Math.min(state.goals[key],target)}/${target}</strong></span>${done&&!claimed?`<button type="button" data-claim="${key}" data-label="${label}">Claim reward</button>`:claimed?'<span>Claimed</span>':'<span>+18 🪙</span>'}</li>`}).join('');document.querySelectorAll('[data-claim]').forEach(b=>b.onclick=()=>claimGoal(b.dataset.claim,b.dataset.claim==='feed'?3:2,b.dataset.label))}
+    function renderShop(){$('shop-list').innerHTML=Object.entries(itemData).map(([key,item])=>`<div class="shop-item"><div><div class="item-name">${item.icon} ${item.name}</div><div class="item-desc">${item.desc}</div></div><button class="shop-buy" type="button" data-buy="${key}">${item.price} 🪙</button></div>`).join('');document.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>buyItem(b.dataset.buy))}
+    function escapeHtml(text){const d=document.createElement('div');d.textContent=text;return d.innerHTML}
+    function render(){ $('money').textContent=Math.floor(state.money);$('score').textContent=state.score;$('day').textContent=state.day;$('level').textContent=state.level;$('level-name').textContent=levelTitle(state.level);$('pet-label').textContent=`Level ${state.level} · ${levelTitle(state.level)}`;const need=xpForNext();$('xp-bar').style.width=`${Math.min(100,state.xp/need*100)}%`;$('xp-current').textContent=`${state.xp} XP`;$('xp-needed').textContent=`${need-state.xp} XP to next level`;
+      const bars=[['hunger','hunger'],['weight','weight'],['happiness','happiness'],['energy','energy'],['clean','clean'],['health','health']];bars.forEach(([key,id])=>{const val=Math.round(state[key]),bar=$(`${id}-bar`);bar.style.width=`${val}%`;bar.className=`bar-fill ${key==='weight'?(val<45?'good':val<72?'warn':'bad'):(val>60?'good':val>30?'warn':'bad')}`;$(`${id}-value`).textContent=`${val}%`});
+      const scale=1+state.weight/220;$('pet-image').style.setProperty('--pet-size',scale.toFixed(2));$('pet-scene').classList.toggle('overstuffed',state.weight>=72);
+      const lowest=Math.min(state.hunger,state.happiness,state.energy,state.clean,state.health);$('mood-line').textContent=state.dead?'Bennett needs emergency care.':state.weight>=88?'Bennett feels much too full and needs a break.':state.weight>=72?'Bennett has gained too much weight. Try some playtime!':lowest<25?'Bennett is having a rough time!':lowest<50?'Bennett could use some attention.':'Bennett is doing pretty well!';$('clock').textContent=`${String(Math.floor(state.elapsed/60)).padStart(2,'0')}:${String(state.elapsed%60).padStart(2,'0')}`;
+      $('inventory').innerHTML=Object.entries(itemData).map(([key,item])=>`<span class="item-chip">${item.icon} ${item.name} <b>×${state.inventory[key]||0}</b></span>`).join('');$('feed-button').disabled=state.dead||state.inventory.burger<1;$('play-button').disabled=state.dead||state.energy<12;$('rest-button').disabled=state.dead||state.energy>=96;$('clean-button').disabled=state.dead||state.clean>=96;$('work-button').disabled=state.dead||Date.now()<state.lastWork+20000;$('clinic-button').disabled=state.dead||state.money<30||state.health>=96;$('gameover-modal').classList.toggle('show',state.dead);$('revive-button').disabled=state.money<80;updateGoals();$('journal').innerHTML=state.log.map(line=>`<p>${escapeHtml(line)}</p>`).join('');save()}
+    function careAction(message,xp,points){addXP(xp);state.score+=points;state.bestScore=Math.max(state.bestScore,state.score);addLog(message);render()}function animateFeed(){const scene=$('pet-scene');scene.classList.remove('feeding');void scene.offsetWidth;scene.classList.add('feeding');setTimeout(()=>scene.classList.remove('feeding'),1200)}
+    function useItem(key){if(state.dead||!state.inventory[key])return;const gains={burger:{hunger:32},treat:{happiness:20},juice:{energy:22},soap:{clean:35},medicine:{health:28},toy:{happiness:40}}[key];state.inventory[key]--;for(const[stat,amount]of Object.entries(gains))state[stat]=clamp(state[stat]+amount);
+      if(key==='burger'){animateFeed();markGoal('feed');claimGoal('feed',3,'Feed Bennett 3 times');if(state.hunger>72){const gain=state.hunger>90?12:8;state.weight=clamp(state.weight+gain);state.health=clamp(state.health-(state.weight>=88?5:2));state.energy=clamp(state.energy-4);addLog(`Bennett ate while already full and gained ${gain}% weight. Balance treats with exercise.`);notify(state.weight>=88?'Overfed! Bennett has a bellyache and needs a break.':'Bennett is getting chubby—try playing together.')}else{state.weight=clamp(state.weight+2);state.happiness=clamp(state.happiness+3)}}
+      careAction(`${itemData[key].name} used. Bennett feels a little better.`,key==='toy'?8:5,10)}
+    function buyItem(key){const item=itemData[key];if(!item||state.dead)return;if(state.money<item.price){notify('Not enough Putty Coins. Do a gig to earn more!');return}state.money-=item.price;state.inventory[key]++;state.score+=2;addLog(`Bought ${item.name} for ${item.price} coins.`);render();notify(`${item.name} added to your backpack.`)}
+    function play(){if(state.dead||state.energy<12)return;state.energy-=12;state.hunger=clamp(state.hunger-5);state.happiness=clamp(state.happiness+17);state.clean=clamp(state.clean-3);const lost=state.weight>=45?5:2;state.weight=clamp(state.weight-lost);markGoal('play');claimGoal('play',2,'Play together 2 times');careAction(`You played together. Bennett is smiling and lost ${lost}% weight.`,9,15)}
+    function rest(){if(state.dead||state.energy>=96)return;state.energy=clamp(state.energy+30);state.hunger=clamp(state.hunger-5);state.clean=clamp(state.clean-2);careAction('Bennett took a nap and recovered some energy.',4,7)}function cleanUp(){if(state.dead||state.clean>=96)return;state.clean=clamp(state.clean+32);state.happiness=clamp(state.happiness+3);careAction('You tidied up. Bennett feels fresh again.',5,8)}
+    function work(){if(state.dead||Date.now()<state.lastWork+20000)return;const pay=16+Math.floor(Math.random()*13);state.money+=pay;state.lastWork=Date.now();state.energy=clamp(state.energy-11);state.hunger=clamp(state.hunger-4);state.happiness=clamp(state.happiness-2);state.weight=clamp(state.weight-1);markGoal('work');claimGoal('work',2,'Finish 2 gigs');careAction(`Gig finished! You earned ${pay} Putty Coins.`,13,20);notify(`Gig payout: +${pay} coins`)}
+    function clinic(){if(state.dead||state.money<30||state.health>=96)return;state.money-=30;state.health=clamp(state.health+35);state.happiness=clamp(state.happiness+5);careAction('The clinic treated Bennett. Health restored by 35.',3,5);notify('Clinic visit complete.')}
+    function tick(){if(state.dead)return;state.elapsed++;if(state.elapsed%60===0){state.hunger=clamp(state.hunger-4.2);state.happiness=clamp(state.happiness-1.5);state.energy=clamp(state.energy-1.8);state.clean=clamp(state.clean-2.2);if(state.weight>65){state.health=clamp(state.health-(state.weight>85?2.5:1));state.energy=clamp(state.energy-.8)}else if(state.weight>45)state.health=clamp(state.health-.35);else if(state.hunger>65&&state.clean>60&&state.happiness>55)state.health=clamp(state.health+.6);if(state.weight>40&&state.elapsed%180===0)state.weight=clamp(state.weight-1);if(Math.min(state.hunger,state.happiness,state.energy,state.clean,state.health)>50)state.score++,state.bestScore=Math.max(state.bestScore,state.score)}if(state.elapsed>0&&state.elapsed%900===0){state.day++;state.goals={feed:0,play:0,work:0,claimed:[]};state.money+=8;addLog(`A new day begins! Daily goals refreshed. Day ${state.day} allowance: 8 coins.`);notify(`Day ${state.day}! Daily goals refreshed (+8 coins)`)}if(state.health<=0){state.health=0;state.dead=true;addLog('Bennett became too unwell and needs emergency care.')}render()}
+    function revive(){if(state.money<80)return;state.money-=80;state.health=45;state.hunger=Math.max(state.hunger,35);state.clean=Math.max(state.clean,35);state.dead=false;addLog('Emergency care brought Bennett back. Take extra care of him!');notify('Bennett is recovering.');render()}function restart(){const keep={bestScore:Math.max(state.bestScore,state.score),level:state.level,money:Math.floor(state.money/2),score:state.score};state=freshState();state.bestScore=keep.bestScore;state.level=keep.level;state.money=keep.money;state.score=keep.score;addLog('A fresh chapter begins. Your level and score were saved.');render()}
+    $('feed-button').onclick=()=>useItem('burger');$('play-button').onclick=play;$('rest-button').onclick=rest;$('clean-button').onclick=cleanUp;$('work-button').onclick=work;$('clinic-button').onclick=clinic;$('revive-button').onclick=revive;$('restart-button').onclick=restart;renderShop();render();setInterval(tick,1000);setInterval(()=>$('work-button').disabled=state.dead||Date.now()<state.lastWork+20000,1000);
   </script>
 </body>
 </html>
