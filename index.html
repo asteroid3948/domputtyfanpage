@@ -1,8 +1,219 @@
-<h1>Dom putty is the best person of all time hes so small and hes great at football </h1>
-<p>Hm:Charlie rosenberg</p>
-<img src="unnamed.jpg" alt="Description of the image">
-<img src="ss.jpeg" alt="Description of the image">
-//<h1>Dom putty is the best person of all time hes so small and hes great at football </h1>
-<p>Hm:Charlie rosenberg</p>
-<img src="unnamed.jpg" alt="Description of the image">
-<img src="ss.jpeg" alt="Description of the image"> make it so the ss is the logo and it is in the top left and in the center in white text make it say Dom putty fanpage in a good font and big and a idle animation where its like moving up and down kinda and a honeray mention section with the same good text and the photo of Charlie rosenbur with ha idle animation and his name and make it so the back ground has snow and black and a snow like animation
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dom Putty Fanpage</title>
+  <!-- Google Font for clean, bold styling -->
+  <link href="https://googleapis.com" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #000000;
+      color: #ffffff;
+      font-family: 'Poppins', sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+    }
+
+    /* Snow Canvas Background */
+    #snow-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Top Left Logo */
+    .logo {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 2px solid #ffffff;
+      z-index: 10;
+    }
+
+    /* Main Content Container */
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      padding: 120px 20px 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+    }
+
+    /* Idle Up-and-Down Floating Animation */
+    @keyframes floatIdle {
+      0% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-15px);
+      }
+      100% {
+        transform: translateY(0px);
+      }
+    }
+
+    .floating {
+      animation: floatIdle 3s ease-in-out infinite;
+    }
+
+    /* Main Title */
+    .main-title {
+      font-size: 4rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+    }
+
+    .bio-text {
+      font-size: 1.4rem;
+      font-weight: 600;
+      max-width: 600px;
+      line-height: 1.6;
+      color: #e0e0e0;
+    }
+
+    /* Honorary Mention Section */
+    .hm-section {
+      margin-top: 40px;
+      padding: 30px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .hm-heading {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .hm-photo {
+      width: 220px;
+      height: 220px;
+      object-fit: cover;
+      border-radius: 20px;
+      border: 3px solid #ffffff;
+      box-shadow: 0 10px 25px rgba(255, 255, 255, 0.15);
+    }
+
+    .hm-name {
+      font-size: 1.6rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Animated Snow Background -->
+  <canvas id="snow-canvas"></canvas>
+
+  <!-- Logo in Top Left -->
+  <img src="ss.jpeg" alt="Dom Putty Logo" class="logo">
+
+  <!-- Main Center Content -->
+  <div class="container">
+    <h1 class="main-title floating">Dom Putty Fanpage</h1>
+    
+    <p class="bio-text">
+      Dom Putty is the best person of all time, he's so small and he's great at football.
+    </p>
+
+    <!-- Honorary Mention Section -->
+    <div class="hm-section">
+      <h2 class="hm-heading floating">Honorary Mention</h2>
+      <img src="unnamed.jpg" alt="Charlie Rosenberg" class="hm-photo floating">
+      <p class="hm-name floating">Charlie Rosenberg</p>
+    </div>
+  </div>
+
+  <!-- JavaScript for Snow Animation -->
+  <script>
+    const canvas = document.getElementById('snow-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    const snowflakes = [];
+    const numFlakes = 120;
+
+    for (let i = 0; i < numFlakes; i++) {
+      snowflakes.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        radius: Math.random() * 3.5 + 1,
+        speedY: Math.random() * 1.5 + 0.5,
+        speedX: Math.random() * 1 - 0.5
+      });
+    }
+
+    function drawSnow() {
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+
+      for (let i = 0; i < numFlakes; i++) {
+        const flake = snowflakes[i];
+        ctx.moveTo(flake.x, flake.y);
+        ctx.arc(flake.x, flake.y, flake.radius, 0, Math.PI * 2);
+      }
+
+      ctx.fill();
+      updateSnow();
+      requestAnimationFrame(drawSnow);
+    }
+
+    function updateSnow() {
+      for (let i = 0; i < numFlakes; i++) {
+        const flake = snowflakes[i];
+        flake.y += flake.speedY;
+        flake.x += flake.speedX;
+
+        if (flake.y > height) {
+          flake.y = -flake.radius;
+          flake.x = Math.random() * width;
+        }
+        if (flake.x > width) {
+          flake.x = 0;
+        } else if (flake.x < 0) {
+          flake.x = width;
+        }
+      }
+    }
+
+    drawSnow();
+  </script>
+
+</body>
+</html>
