@@ -1,407 +1,395 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dom Putty Fanpage</title>
-  <link href="https://googleapis.com" rel="stylesheet">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dom Putty Fanpage</title>
+    <link href="https://googleapis.com" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-      background-color: #000000;
-      color: #ffffff;
-      font-family: 'Poppins', sans-serif;
-      overflow-x: hidden;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      position: relative;
-    }
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
 
-    /* Snow Canvas Background */
-    #snow-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
-    }
+        /* Snow Canvas Background */
+        #snow-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
 
-    /* Top Left Logo */
-    .logo {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      width: 80px;
-      height: 80px;
-      object-fit: cover;
-      border-radius: 50%;
-      border: 2px solid #ffffff;
-      z-index: 10;
-    }
+        /* Top Left Logo */
+        .logo {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid #ffffff;
+            z-index: 10;
+        }
 
-    /* Main Content Container */
-    .container {
-      position: relative;
-      z-index: 1;
-      max-width: 850px;
-      padding: 110px 20px 60px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 35px;
-    }
+        /* Main Content Container */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 850px;
+            padding: 110px 20px 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 35px;
+        }
 
-    /* Idle Up-and-Down Floating Animation */
-    @keyframes floatIdle {
-      0% { transform: translateY(0px); }
-      50% { transform: translateY(-14px); }
-      100% { transform: translateY(0px); }
-    }
+        /* Idle Up-and-Down Floating Animation */
+        @keyframes floatIdle {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-14px); }
+            100% { transform: translateY(0px); }
+        }
 
-    .floating {
-      animation: floatIdle 3s ease-in-out infinite;
-    }
+        .floating {
+            animation: floatIdle 3s ease-in-out infinite;
+        }
 
-    /* Main Title */
-    .main-title {
-      font-size: 4rem;
-      font-weight: 800;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      text-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
-    }
+        /* Main Title */
+        .main-title {
+            font-size: 4rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+        }
 
-    .bio-text {
-      font-size: 1.4rem;
-      font-weight: 600;
-      max-width: 600px;
-      line-height: 1.6;
-      color: #e0e0e0;
-    }
+        .bio-text {
+            font-size: 1.4rem;
+            font-weight: 600;
+            max-width: 600px;
+            line-height: 1.6;
+            color: #e0e0e0;
+        }
 
-    /* Honorary Mention Section */
-    .hm-section {
-      margin-top: 20px;
-      padding: 30px;
-      border-top: 1px solid rgba(255, 255, 255, 0.2);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 18px;
-    }
+        /* Honorary Mention Section */
+        .hm-section {
+            margin-top: 20px;
+            padding: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+        }
 
-    .hm-heading {
-      font-size: 2.2rem;
-      font-weight: 800;
-      letter-spacing: 1px;
-    }
+        .hm-heading {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
 
-    .hm-photo {
-      width: 220px;
-      height: 220px;
-      object-fit: cover;
-      border-radius: 20px;
-      border: 3px solid #ffffff;
-      box-shadow: 0 10px 25px rgba(255, 255, 255, 0.15);
-      cursor: pointer;
-      transition: box-shadow 0.25s ease;
-    }
+        .hm-photo {
+            width: 220px;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 20px;
+            border: 3px solid #ffffff;
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.15);
+            cursor: pointer;
+            transition: box-shadow 0.25s ease;
+        }
 
-    .hm-photo:hover {
-      box-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
-    }
+        .hm-photo:hover {
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
+        }
 
-    .click-hint {
-      font-size: 0.85rem;
-      color: #aaaaaa;
-    }
+        .click-hint {
+            font-size: 0.85rem;
+            color: #aaaaaa;
+        }
 
-    .hm-name {
-      font-size: 1.6rem;
-      font-weight: 600;
-    }
+        .hm-name {
+            font-size: 1.6rem;
+            font-weight: 600;
+        }
 
-    /* Lightbox Modal for Enlarged HM Photo */
-    .photo-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.88);
-      z-index: 100;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      gap: 15px;
-      cursor: pointer;
-      padding: 20px;
-    }
+        /* Lightbox Modal for Enlarged HM Photo */
+        .photo-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.88);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 15px;
+            cursor: pointer;
+            padding: 20px;
+        }
 
-    .photo-modal.active {
-      display: flex;
-    }
+        .photo-modal.active {
+            display: flex;
+        }
 
-    .photo-modal img {
-      max-width: 90vw;
-      max-height: 80vh;
-      border-radius: 20px;
-      border: 4px solid #ffffff;
-      box-shadow: 0 0 40px rgba(255, 255, 255, 0.35);
-      object-fit: contain;
-    }
+        .photo-modal img {
+            max-width: 90vw;
+            max-height: 80vh;
+            border-radius: 20px;
+            border: 4px solid #ffffff;
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.35);
+            object-fit: contain;
+        }
 
-    /* Game Launch Button */
-    .snake-btn {
-      margin-top: 10px;
-      padding: 16px 34px;
-      font-family: 'Poppins', sans-serif;
-      font-size: 1.25rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #ffffff;
-      background: linear-gradient(135deg, #7a1c31, #4a0e1c);
-      border: 2px solid #ffffff;
-      border-radius: 14px;
-      cursor: pointer;
-      box-shadow: 0 0 20px rgba(122, 28, 49, 0.7);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
+        /* Game Launch Button */
+        .snake-btn {
+            margin-top: 10px;
+            padding: 16px 34px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #ffffff;
+            background: linear-gradient(135deg, #7a1c31, #4a0e1c);
+            border: 2px solid #ffffff;
+            border-radius: 14px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(122, 28, 49, 0.7);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
 
-    .snake-btn:hover {
-      transform: scale(1.06);
-      box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
-    }
+        .snake-btn:hover {
+            transform: scale(1.06);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+        }
 
-    /* Snake Game Section */
-    .game-wrapper {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      gap: 15px;
-      background: #111111;
-      padding: 25px;
-      border-radius: 20px;
-      border: 2px solid #7a1c31;
-      box-shadow: 0 0 35px rgba(122, 28, 49, 0.6);
-      margin-top: 10px;
-    }
+        /* Snake Game Section */
+        .game-wrapper {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            background: #111111;
+            padding: 25px;
+            border-radius: 20px;
+            border: 2px solid #7a1c31;
+            box-shadow: 0 0 35px rgba(122, 28, 49, 0.6);
+            margin-top: 10px;
+        }
 
-    .game-wrapper.active {
-      display: flex;
-    }
+        .game-wrapper.active {
+            display: flex;
+        }
 
-    .scoreboard {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 1.2rem;
-      font-weight: 800;
-      padding: 0 10px;
-    }
+        .scoreboard {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.2rem;
+            font-weight: 800;
+            padding: 0 10px;
+        }
 
-    .scoreboard span {
-      color: #ff6b8b;
-    }
+        .scoreboard span {
+            color: #ff6b8b;
+        }
 
-    .canvas-container {
-      position: relative;
-      border: 3px solid #ffffff;
-      border-radius: 10px;
-      overflow: hidden;
-      background: #181818;
-    }
+        .canvas-container {
+            position: relative;
+            border: 3px solid #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #181818;
+        }
 
-    #snake-canvas {
-      display: block;
-    }
+        #snake-canvas {
+            display: block;
+        }
 
-    .game-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.78);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 15px;
-      padding: 20px;
-    }
+        .game-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.78);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+        }
 
-    .game-overlay.hidden {
-      display: none;
-    }
+        .game-overlay.hidden {
+            display: none;
+        }
 
-    .overlay-title {
-      font-size: 2rem;
-      font-weight: 800;
-      color: #ffffff;
-    }
+        .overlay-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #ffffff;
+        }
 
-    .controls-hint {
-      font-size: 0.95rem;
-      color: #cccccc;
-    }
-  </style>
+        .controls-hint {
+            font-size: 0.95rem;
+            color: #cccccc;
+        }
+    </style>
 </head>
 <body>
 
-  <!-- Animated Snow Background -->
-  <canvas id="snow-canvas"></canvas>
+    <!-- Animated Snow Background -->
+    <canvas id="snow-canvas"></canvas>
 
-  <!-- Logo in Top Left -->
-  <img src="ss.jpeg" alt="Dom Putty Logo" class="logo">
+    <!-- Logo in Top Left -->
+    <img src="ss.jpeg" alt="Dom Putty Logo" class="logo">
 
-  <!-- Enlarged Photo Lightbox -->
-  <div class="photo-modal" id="photo-modal" onclick="closePhotoModal()">
-    <img src="unnamed.jpg" alt="Charlie Rosenberg Enlarged">
-    <p style="font-size: 1.3rem; font-weight: 800;">Charlie Rosenberg (Click anywhere to close)</p>
-  </div>
-
-  <!-- Main Center Content -->
-  <div class="container">
-    <h1 class="main-title floating">Dom Putty Fanpage</h1>
-    
-    <p class="bio-text">
-      Dom Putty is the best person of all time, he's so small and he's great at football.
-    </p>
-
-    <!-- Honorary Mention Section -->
-    <div class="hm-section">
-      <h2 class="hm-heading floating">Honorary Mention</h2>
-      <img src="unnamed.jpg" alt="Charlie Rosenberg" class="hm-photo floating" onclick="openPhotoModal()" title="Click to enlarge">
-      <span class="click-hint">(Click photo to make it bigger)</span>
-      <p class="hm-name floating">Charlie Rosenberg</p>
+    <!-- Enlarged Photo Lightbox -->
+    <div class="photo-modal" id="photo-modal" onclick="closePhotoModal()">
+        <img src="unnamed.jpg" alt="Charlie Rosenberg Enlarged">
+        <p style="font-size: 1.3rem; font-weight: 800;">Charlie Rosenberg (Click anywhere to close)</p>
     </div>
 
-    <!-- Play Bennet Speller Snake Button -->
-    <button class="snake-btn" id="open-game-btn" onclick="openSnakeGame()">
-      Play Bennet Speller Snake
-    </button>
-
-    <!-- Snake Game Arena -->
-    <div class="game-wrapper" id="game-wrapper">
-      <div class="scoreboard">
-        <div>Burgers Eaten: <span id="score-display">0</span></div>
-        <div>Best: <span id="high-score-display">0</span></div>
-      </div>
-
-      <div class="canvas-container">
-        <canvas id="snake-canvas" width="612" height="540"></canvas>
+    <!-- Main Center Content -->
+    <div class="container">
+        <h1 class="main-title floating">Dom Putty Fanpage</h1>
         
-        <div class="game-overlay" id="game-overlay">
-          <div class="overlay-title" id="overlay-title">Bennet Speller Snake</div>
-          <p class="controls-hint" id="overlay-subtitle">Use W A S D or Arrow Keys to move & eat burgers!</p>
-          <button class="snake-btn" onclick="startSnakeGame()">Start Game</button>
+        <p class="bio-text">
+            Dom Putty is the best person of all time, he's so small and he's great at football.
+        </p>
+
+        <!-- Honorary Mention Section -->
+        <div class="hm-section">
+            <h2 class="hm-heading floating">Honorary Mention</h2>
+            <img src="unnamed.jpg" alt="Charlie Rosenberg" class="hm-photo floating" onclick="openPhotoModal()" title="Click to enlarge">
+            <span class="click-hint">(Click photo to make it bigger)</span>
+            <p class="hm-name floating">Charlie Rosenberg</p>
         </div>
-      </div>
+
+        <!-- Play Bennet Speller Snake Button -->
+        <button class="snake-btn" id="open-game-btn" onclick="openSnakeGame()">
+            Play Bennet Speller Snake
+        </button>
+
+        <!-- Snake Game Arena -->
+        <div class="game-wrapper" id="game-wrapper">
+            <div class="scoreboard">
+                <div>Burgers Eaten: <span id="score-display">0</span></div>
+                <div>Best: <span id="high-score-display">0</span></div>
+            </div>
+            
+            <div class="canvas-container">
+                <canvas id="snake-canvas" width="612" height="540"></canvas>
+                <div class="game-overlay" id="game-overlay">
+                    <div class="overlay-title" id="overlay-title">Bennet Speller Snake</div>
+                    <p class="controls-hint" id="overlay-subtitle">Use W A S D or Arrow Keys to move & eat burgers!</p>
+                    <button class="snake-btn" onclick="startSnakeGame()">Start Game</button>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <script>
-    /* 1. LIGHTBOX FOR HONORARY MENTION PHOTO */
-    function openPhotoModal() {
-      document.getElementById('photo-modal').classList.add('active');
-    }
-
-    function closePhotoModal() {
-      document.getElementById('photo-modal').classList.remove('active');
-    }
-
-    /* 2. SNOW BACKGROUND ANIMATION */
-    const snowCanvas = document.getElementById('snow-canvas');
-    const snowCtx = snowCanvas.getContext('2d');
-
-    let width = snowCanvas.width = window.innerWidth;
-    let height = snowCanvas.height = window.innerHeight;
-
-    window.addEventListener('resize', () => {
-      width = snowCanvas.width = window.innerWidth;
-      height = snowCanvas.height = window.innerHeight;
-    });
-
-    const snowflakes = [];
-    const numFlakes = 120;
-
-    for (let i = 0; i < numFlakes; i++) {
-      snowflakes.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        radius: Math.random() * 3.5 + 1,
-        speedY: Math.random() * 1.5 + 0.5,
-        speedX: Math.random() * 1 - 0.5
-      });
-    }
-
-    function drawSnow() {
-      snowCtx.clearRect(0, 0, width, height);
-      snowCtx.fillStyle = '#ffffff';
-      snowCtx.beginPath();
-
-      for (let i = 0; i < numFlakes; i++) {
-        const flake = snowflakes[i];
-        snowCtx.moveTo(flake.x, flake.y);
-        snowCtx.arc(flake.x, flake.y, flake.radius, 0, Math.PI * 2);
-      }
-
-      snowCtx.fill();
-      updateSnow();
-      requestAnimationFrame(drawSnow);
-    }
-
-    function updateSnow() {
-      for (let i = 0; i < numFlakes; i++) {
-        const flake = snowflakes[i];
-        flake.y += flake.speedY;
-        flake.x += flake.speedX;
-
-        if (flake.y > height) {
-          flake.y = -flake.radius;
-          flake.x = Math.random() * width;
+    <script>
+        /* 1. LIGHTBOX FOR HONORARY MENTION PHOTO */
+        function openPhotoModal() {
+            document.getElementById('photo-modal').classList.add('active');
         }
-        if (flake.x > width) flake.x = 0;
-        else if (flake.x < 0) flake.x = width;
-      }
-    }
 
-    drawSnow();
+        function closePhotoModal() {
+            document.getElementById('photo-modal').classList.remove('active');
+        }
 
-    /* 3. BENNET SPELLER SNAKE GAME */
-    const gameCanvas = document.getElementById('snake-canvas');
-    const ctx = gameCanvas.getContext('2d');
+        /* 2. SNOW BACKGROUND ANIMATION */
+        const snowCanvas = document.getElementById('snow-canvas');
+        const snowCtx = snowCanvas.getContext('2d');
 
-    const TILE_SIZE = 36;
-    const COLS = 17;
-    const ROWS = 15;
+        let width = snowCanvas.width = window.innerWidth;
+        let height = snowCanvas.height = window.innerHeight;
 
-    const headImg = new Image();
-    headImg.src = 'bs.png';
+        window.addEventListener('resize', () => {
+            width = snowCanvas.width = window.innerWidth;
+            height = snowCanvas.height = window.innerHeight;
+        });
 
-    const burgerImg = new Image();
-    burgerImg.src = 'burger.png';
+        const snowflakes = [];
+        const numFlakes = 120;
 
-    let snake = [];
-    let direction = { x: 1, y: 0 };
-    let inputQueue = [];
-    let burger = { x: 12, y: 7 };
-    let score = 0;
+        for (let i = 0; i < numFlakes; i++) {
+            snowflakes.push({
+                x: Math.random() * width,
 Use code with caution.
+y: Math.random() * height,
+radius: Math.random() * 3.5 + 1,
+speedY: Math.random() * 1.5 + 0.5,
+speedX: Math.random() * 1 - 0.5
+});
+}
+function drawSnow() {
+snowCtx.clearRect(0, 0, width, height);
+snowCtx.fillStyle = '#ffffff';
+snowCtx.beginPath();
+for (let i = 0; i < numFlakes; i++) {
+const flake = snowflakes[i];
+snowCtx.moveTo(flake.x, flake.y);
+snowCtx.arc(flake.x, flake.y, flake.radius, 0, Math.PI * 2);
+}
+snowCtx.fill();
+updateSnow();
+requestAnimationFrame(drawSnow);
+}
+function updateSnow() {
+for (let i = 0; i < numFlakes; i++) {
+const flake = snowflakes[i];
+flake.y += flake.speedY;
+flake.x += flake.speedX;
+if (flake.y > height) {
+flake.y = -flake.radius;
+flake.x = Math.random() * width;
+}
+if (flake.x > width) flake.x = 0;
+else if (flake.x < 0) flake.x = width;
+}
+}
+drawSnow();
+/* 3. BENNET SPELLER SNAKE GAME */
+const gameCanvas = document.getElementById('snake-canvas');
+const ctx = gameCanvas.getContext('2d');
+const TILE_SIZE = 36;
+const COLS = 17;
+const ROWS = 15;
+const headImg = new Image();
+headImg.src = 'bs.png';
+const burgerImg = new Image();
+burgerImg.src = 'burger.png';
+let snake = [];
+let direction = { x: 1, y: 0 };
+let inputQueue = [];
+let burger = { x: 12, y: 7 };
+let score = 0;
 let highScore = localStorage.getItem('bennetSnakeBest') || 0;
 let gameLoop = null;
 let isGameRunning = false;
@@ -562,3 +550,4 @@ document.getElementById('overlay-subtitle').textContent = Bennet ate ${score} bu
 document.querySelector('#game-overlay .snake-btn').textContent = 'Play Again';
 document.getElementById('game-overlay').classList.remove('hidden');
 }
+
