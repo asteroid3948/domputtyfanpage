@@ -1,6 +1,6 @@
 # Cloudflare Pages setup
 
-The page is static, but accounts and a shared leaderboard need a server-side API and persistent database. The `/functions` directory in this repo supplies Cloudflare Pages Functions; `schema.sql` creates the D1 tables.
+The page is static, but accounts anzd a shared leaderboard need a server-side API and persistent database. The `/functions` directory in this repo supplies Cloudflare Pages Functions; `schema.sql` creates the D1 tables.
 
 ## Connect the GitHub repo to Pages
 
