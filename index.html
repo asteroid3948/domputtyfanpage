@@ -3,346 +3,446 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#050505">
-  <title>Dom Putty Fanpage</title>
+  <meta name="theme-color" content="#101513">
+  <title>Dom Putty Fanpage — Bennett's Burger Shop</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; }
-    html, body { width: 100%; min-height: 100%; margin: 0; }
-    body { min-height: 100vh; overflow: hidden; background: #050505; color: #f7f4f2; font-family: "DM Sans", "Segoe UI", sans-serif; }
-    button { font: inherit; }
-    .screen { position: fixed; inset: 0; }
-    .hidden { display: none !important; }
-
-    #game-screen { background: radial-gradient(ellipse at center, #171717 0%, #050505 70%); }
-    h1 { position: absolute; z-index: 3; top: 20px; left: 28px; margin: 0; font-size: clamp(1.35rem, 3vw, 2rem); letter-spacing: -.045em; animation: title-bob 3s ease-in-out infinite; }
-    .hint { position: absolute; z-index: 2; top: 82px; left: 50%; width: max-content; max-width: calc(100vw - 32px); transform: translateX(-50%); color: #d3d3d3; text-align: center; font-size: clamp(.85rem, 2vw, 1rem); }
-    .target { position: absolute; z-index: 1; top: 50%; width: clamp(110px, 17vw, 190px); height: clamp(160px, 29vh, 250px); transform: translateY(-50%); padding: 10px; border: 2px solid #383838; border-radius: 16px; background: #111; box-shadow: 0 12px 35px #0009; color: white; text-align: center; }
-    .target-left { left: 18px; }
-    .target-right { right: 18px; }
-    .target img { width: 100%; height: calc(100% - 34px); object-fit: cover; border-radius: 10px; }
-    .target span { display: block; padding-top: 6px; font-size: .95rem; font-weight: 700; }
-    .bennett { position: absolute; z-index: 4; left: 50%; top: 50%; width: clamp(90px, 15vw, 130px); height: clamp(90px, 15vw, 130px); object-fit: contain; cursor: grab; touch-action: none; user-select: none; -webkit-user-drag: none; will-change: left, top, transform; }
-    .bennett.is-held { cursor: grabbing; }
-
-    #shop-screen { overflow-y: auto; padding: 24px clamp(16px, 4vw, 48px) 36px; background: linear-gradient(180deg, #f3f5f2, #dce5dc); color: #17231a; }
-    .shop-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; max-width: 1100px; margin: 0 auto 20px; }
-    .shop-header h2 { margin: 0; font-size: clamp(1.5rem, 4vw, 2.2rem); }
-    .shop-header p { margin: 5px 0 0; color: #526154; }
-    .shop-actions { display: flex; align-items: center; gap: 10px; }
-    .shop-button { border: 0; border-radius: 12px; padding: 11px 16px; background: #173d2b; color: #fff; cursor: pointer; font-weight: 700; }
-    .shop-button.secondary { background: #26332a; }
-    .aisle { max-width: 1100px; margin: 0 auto; padding: 18px; border: 1px solid #cad4ca; border-radius: 18px; background: #fff; box-shadow: 0 12px 34px #23332218; }
-    .aisle-title { margin: 0 0 14px; color: #243b2b; }
-    .shelf { display: flex; flex-wrap: wrap; align-items: end; gap: 18px; min-height: 180px; padding: 18px; border-bottom: 14px solid #a87b4f; border-radius: 8px; background: repeating-linear-gradient(90deg, #eef2ec 0 90px, #e4eae2 90px 180px); }
-    .product { width: 132px; padding: 10px; border: 1px solid #d6ddd4; border-radius: 12px; background: #fff; color: #26332a; text-align: center; cursor: grab; touch-action: none; user-select: none; box-shadow: 0 4px 10px #0000000c; }
-    .product img { display: block; width: 100%; height: 94px; object-fit: contain; pointer-events: none; }
-    .product strong, .product small { display: block; }
-    .product small { margin-top: 3px; color: #58665a; }
-    .shopping-area { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px; max-width: 1100px; margin: 22px auto 0; }
-    .shop-bennett { display: flex; align-items: center; gap: 12px; }
-    .shop-bennett img { width: 100px; height: 100px; object-fit: contain; }
-    .wallet-wrap { position: relative; }
-    .balance { margin-bottom: 5px; color: #078432; text-align: center; font-size: 1.2rem; font-weight: 800; }
-    .wallet { border: 0; border-radius: 14px; padding: 12px 18px; background: #214f38; color: white; cursor: pointer; font-weight: 700; }
-    .wallet-card { position: absolute; z-index: 5; top: 100%; right: 0; width: 210px; margin-top: 8px; padding: 16px; border: 1px solid #cbd6cc; border-radius: 14px; background: white; box-shadow: 0 10px 24px #0002; }
-    .wallet-card strong { display: block; margin-bottom: 6px; }
-    .basket { display: flex; align-items: center; gap: 10px; min-width: 220px; min-height: 112px; padding: 12px; border: 3px dashed #568065; border-radius: 16px; background: #e8f3e8; color: #244631; }
-    .basket-icon { font-size: 2.5rem; }
-    .basket-items { display: flex; flex-wrap: wrap; gap: 4px; max-width: 145px; }
-    .basket-items img { width: 38px; height: 38px; object-fit: contain; }
-    .basket.over { background: #d1f1d6; border-color: #16833e; }
-    .cart-message { max-width: 1100px; min-height: 24px; margin: 12px auto; color: #27623b; font-weight: 700; }
-    .back-button { position: fixed; right: 18px; bottom: 18px; z-index: 6; }
-    body.screen-shake { animation: screen-shake .45s ease both; }
-    @keyframes title-bob { 0%,100% { translate: 0 0; } 50% { translate: 0 -5px; } }
-    @keyframes screen-shake { 0%,100% { translate: 0 0; } 20%,60% { translate: -6px 3px; } 40%,80% { translate: 6px -3px; } }
-    @media (max-width: 600px) {
-      h1 { top: 14px; left: 15px; }
-      .hint { top: 64px; }
-      .target { top: auto; bottom: 16px; width: 104px; height: 145px; }
-      .target-left { left: 10px; }
-      .target-right { right: 10px; }
-      .bennett { top: 48%; }
-      .shop-header { align-items: flex-start; flex-direction: column; }
-      .shop-actions { width: 100%; }
-      .shelf { justify-content: center; }
-      .shopping-area { justify-content: center; }
+    html, body { width: 100%; height: 100%; margin: 0; }
+    body {
+      overflow: hidden;
+      background: #101513;
+      color: #f7f8f6;
+      font-family: "DM Sans", "Segoe UI", sans-serif;
+      user-select: none;
     }
-    @media (prefers-reduced-motion: reduce) { h1 { animation: none; } body.screen-shake { animation: none; } }
+    button { font: inherit; }
+
+    .topbar {
+      position: fixed;
+      z-index: 5;
+      inset: 0 0 auto;
+      height: 142px;
+      padding: 18px 22px;
+      border-bottom: 1px solid #ffffff16;
+      background: linear-gradient(180deg, #1a211e, #131916);
+    }
+    .brand { position: absolute; top: 16px; left: 22px; margin: 0; font-size: clamp(1.05rem, 2.8vw, 1.65rem); letter-spacing: -.04em; }
+    .shop-card {
+      position: absolute;
+      top: 56px;
+      left: 22px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border: 1px solid #ffffff1a;
+      border-radius: 14px;
+      background: #ffffff0b;
+    }
+    .product-icon { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 10px; background: #fff; }
+    .product-icon img { width: 36px; height: 36px; object-fit: contain; }
+    .product-info strong, .product-info span { display: block; }
+    .product-info span { margin-top: 2px; color: #b8c5bb; font-size: .82rem; }
+    .buy-button {
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      background: #58c778;
+      color: #102016;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .buy-button:hover:not(:disabled) { background: #77df92; }
+    .buy-button:disabled { cursor: not-allowed; opacity: .48; }
+    .wallet {
+      position: absolute;
+      top: 20px;
+      right: 22px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 14px;
+      border: 1px solid #ffffff1c;
+      border-radius: 12px;
+      background: #ffffff0b;
+    }
+    .wallet-icon { font-size: 1.4rem; }
+    .wallet-label { color: #aab8ae; font-size: .75rem; }
+    .wallet-amount { color: #6de28c; font-size: 1.15rem; font-weight: 800; }
+    .dispenser {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      width: 116px;
+      height: 118px;
+      transform: translateX(-50%);
+      border: 3px solid #75827a;
+      border-radius: 15px 15px 9px 9px;
+      background: linear-gradient(135deg, #d9e0db, #8c9990 56%, #67746b);
+      box-shadow: 0 8px 18px #0005, inset 0 2px 6px #fff9;
+      text-align: center;
+    }
+    .dispenser-name { padding-top: 9px; color: #24352a; font-size: .78rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+    .dispenser-window { width: 72px; height: 35px; margin: 7px auto 0; border: 3px solid #59665d; border-radius: 7px; background: linear-gradient(135deg, #fafcf9, #b9c9bd); }
+    .dispenser-chute { position: absolute; bottom: -11px; left: 37px; width: 42px; height: 13px; border: 3px solid #68756c; border-top: 0; border-radius: 0 0 5px 5px; background: #39453d; }
+    .dispenser-label { position: absolute; right: 0; bottom: 1px; left: 0; color: #425047; font-size: .58rem; font-weight: 700; }
+
+    #stage {
+      position: fixed;
+      z-index: 1;
+      inset: 142px 0 0;
+      overflow: hidden;
+      background: radial-gradient(ellipse at 50% 35%, #26312a, #111714 68%, #0c100e);
+    }
+    #stage::after { position: absolute; right: 0; bottom: 0; left: 0; height: 15px; background: linear-gradient(#75816d, #4a5447); box-shadow: 0 -7px 22px #0005; content: ""; }
+    .hint { position: absolute; z-index: 1; top: 15px; left: 50%; width: max-content; max-width: calc(100% - 24px); transform: translateX(-50%); color: #cad3cc; font-size: .9rem; text-align: center; }
+    .character, .dropped-burger {
+      position: absolute;
+      z-index: 2;
+      width: 116px;
+      height: 116px;
+      object-fit: contain;
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-drag: none;
+      will-change: left, top, transform;
+    }
+    .character { width: 132px; height: 132px; z-index: 3; }
+    .character.held, .dropped-burger.held { cursor: grabbing; }
+    .dropped-burger { padding: 9px; border: 1px solid #ffffffa0; border-radius: 50%; background: #fff; box-shadow: 0 8px 22px #0005; }
+    .dropped-burger.eating { pointer-events: none; animation: burger-eaten .48s ease-in forwards; }
+    .character.munch { animation: munch .56s ease-in-out; }
+    .status { position: fixed; z-index: 4; right: 12px; bottom: 20px; left: 12px; margin: 0; color: #d3ded5; font-size: .88rem; text-align: center; pointer-events: none; }
+    body.screen-shake { animation: shake .38s linear; }
+
+    @keyframes munch {
+      0%, 100% { scale: 1; }
+      22% { scale: 1.12 .82; }
+      48% { scale: .9 1.12; }
+      72% { scale: 1.08 .9; }
+    }
+    @keyframes burger-eaten {
+      0% { opacity: 1; scale: 1; }
+      55% { opacity: 1; scale: .8; }
+      100% { opacity: 0; scale: .08; translate: 0 24px; }
+    }
+    @keyframes shake {
+      0%, 100% { translate: 0 0; }
+      20%, 60% { translate: -5px 2px; }
+      40%, 80% { translate: 5px -2px; }
+    }
+    @media (max-width: 600px) {
+      .topbar { height: 174px; padding: 12px; }
+      .brand { top: 12px; left: 12px; }
+      .shop-card { top: 58px; left: 10px; gap: 7px; padding: 8px; }
+      .product-icon { width: 34px; height: 34px; }
+      .product-icon img { width: 30px; height: 30px; }
+      .buy-button { padding: 9px; font-size: .8rem; }
+      .wallet { top: 10px; right: 10px; gap: 6px; padding: 7px 9px; }
+      .wallet-icon { font-size: 1.1rem; }
+      .wallet-amount { font-size: 1rem; }
+      .dispenser { top: 95px; width: 82px; height: 72px; border-width: 2px; border-radius: 10px 10px 6px 6px; }
+      .dispenser-name { padding-top: 5px; font-size: .6rem; }
+      .dispenser-window { width: 50px; height: 21px; margin-top: 4px; border-width: 2px; }
+      .dispenser-chute { bottom: -8px; left: 26px; width: 28px; height: 10px; border-width: 2px; }
+      .dispenser-label { display: none; }
+      #stage { inset-block-start: 174px; }
+      .character { width: 112px; height: 112px; }
+      .dropped-burger { width: 94px; height: 94px; }
+      .hint { top: 10px; font-size: .78rem; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; } body.screen-shake { animation: none; } }
   </style>
 </head>
 <body>
-  <main id="game-screen" class="screen" aria-label="Bennett throwing game">
-    <h1>Dom Putty Fanpage</h1>
-    <p class="hint">Throw him into one! &nbsp; Drag Bennett and let go to toss him.</p>
-    <div class="target target-left" data-target="bagel" aria-label="Bagel target">
-      <img src="bagle.jpeg" alt="Bagel target">
-      <span>Bagel</span>
+  <header class="topbar">
+    <h1 class="brand">Dom Putty Fanpage</h1>
+    <section class="shop-card" aria-label="Shop menu">
+      <span class="product-icon"><img src="burger.png" alt=""></span>
+      <span class="product-info"><strong>Burger</strong><span>One burger · $8</span></span>
+      <button class="buy-button" id="buy-button" type="button">Dispense · $8</button>
+    </section>
+    <div class="dispenser" aria-label="Burger dispenser">
+      <div class="dispenser-name">Burger dispenser</div>
+      <div class="dispenser-window"></div>
+      <div class="dispenser-chute"></div>
+      <div class="dispenser-label">PUSH TO DISPENSE</div>
     </div>
-    <div class="target target-right" data-target="walmart" aria-label="Wall target">
-      <img src="wall.jpeg" alt="Wall target">
-      <span>Wall</span>
-    </div>
-    <img class="bennett" id="bennett" src="bs.png" alt="Bennett Speller. Drag and throw him at either target." draggable="false">
-  </main>
+    <aside class="wallet" aria-label="Bennett's wallet">
+      <span class="wallet-icon" aria-hidden="true">👛</span>
+      <span><span class="wallet-label">Bennett's money</span><strong class="wallet-amount" id="money">$10.00</strong></span>
+    </aside>
+  </header>
 
-  <main id="shop-screen" class="screen hidden" aria-label="Walmart shopping area">
-    <header class="shop-header">
-      <div>
-        <h2>Walmart Burger Aisle</h2>
-        <p>Bennett made it to the store. Drag burgers from the shelf into his basket.</p>
-      </div>
-      <div class="shop-actions">
-        <button id="wallet-button" class="shop-button" type="button" aria-expanded="false">Show Bennett's wallet</button>
-        <button id="checkout-button" class="shop-button secondary" type="button">Checkout</button>
-      </div>
-    </header>
-    <section class="aisle" aria-labelledby="shelf-title">
-      <h3 class="aisle-title" id="shelf-title">Fresh burgers — $2 each</h3>
-      <div class="shelf">
-        <div class="product" data-product="burger" aria-label="Burger, two dollars. Drag into the basket.">
-          <img src="burger.png" alt="Burger">
-          <strong>Burger</strong><small>$2.00 · drag to basket</small>
-        </div>
-        <div class="product" data-product="burger" aria-label="Burger, two dollars. Drag into the basket.">
-          <img src="burger.png" alt="Burger">
-          <strong>Burger</strong><small>$2.00 · drag to basket</small>
-        </div>
-        <div class="product" data-product="burger" aria-label="Burger, two dollars. Drag into the basket.">
-          <img src="burger.png" alt="Burger">
-          <strong>Burger</strong><small>$2.00 · drag to basket</small>
-        </div>
-        <div class="product" data-product="burger" aria-label="Burger, two dollars. Drag into the basket.">
-          <img src="burger.png" alt="Burger">
-          <strong>Burger</strong><small>$2.00 · drag to basket</small>
-        </div>
-      </div>
-    </section>
-    <section class="shopping-area" aria-label="Bennett and shopping basket">
-      <div class="shop-bennett">
-        <img src="bs.png" alt="Bennett Speller">
-        <strong>Bennett</strong>
-      </div>
-      <div class="wallet-wrap">
-        <div class="balance" id="balance-label">$10.00</div>
-        <button class="wallet" id="wallet-button-bottom" type="button" aria-expanded="false">👛 Wallet</button>
-        <div class="wallet-card hidden" id="wallet-card"><strong>Bennett's Wallet</strong><span>Balance: <b class="money">$10.00</b></span></div>
-      </div>
-      <div class="basket" id="basket" aria-label="Shopping basket. Drop burgers here.">
-        <span class="basket-icon" aria-hidden="true">🧺</span>
-        <div><strong>Shopping basket</strong><div class="basket-items" id="basket-items"></div></div>
-      </div>
-    </section>
-    <p class="cart-message" id="cart-message" role="status" aria-live="polite">Basket is empty.</p>
-    <button class="shop-button secondary back-button" id="back-button" type="button">Back to throwing game</button>
+  <main id="stage" aria-label="Burger shop play area">
+    <p class="hint">Buy a burger, then drag or throw it to Bennett to feed him!</p>
+    <img class="character" id="bennett" src="bs.png" alt="Bennett Speller. Drag him around, or toss burgers to feed him." draggable="false">
   </main>
+  <p class="status" id="status" role="status" aria-live="polite">Bennett starts with $10. A burger costs $8.</p>
 
   <script>
-    const gameScreen = document.getElementById("game-screen");
-    const shopScreen = document.getElementById("shop-screen");
+    const stage = document.getElementById("stage");
     const bennett = document.getElementById("bennett");
-    const targets = [...document.querySelectorAll(".target")];
-    const size = 110;
-    const state = {
-      x: innerWidth / 2,
-      y: innerHeight / 2,
-      vx: 0,
-      vy: 0,
-      angle: 0,
-      spin: 0,
-      held: false,
-      pointerId: null,
-      grabX: 0,
-      grabY: 0,
-      lastX: 0,
-      lastY: 0,
-      lastTime: 0,
-      entered: false
-    };
+    const buyButton = document.getElementById("buy-button");
+    const moneyDisplay = document.getElementById("money");
+    const status = document.getElementById("status");
+    const burgerSize = 100;
+    const bennettSize = 116;
+    const gravity = 1250;
+    const floorBounce = 0.62;
+    const wallBounce = 0.72;
     let money = 10;
-    let basketCount = 0;
+    let nextId = 0;
 
-    function drawBennett() {
-      bennett.style.left = `${state.x}px`;
-      bennett.style.top = `${state.y}px`;
-      bennett.style.transform = `translate(-50%, -50%) rotate(${state.angle}rad)`;
+    function stageBounds() {
+      return { width: stage.clientWidth, height: stage.clientHeight };
     }
 
-    function openShop() {
-      if (state.entered) return;
-      state.entered = true;
-      state.held = false;
-      gameScreen.classList.add("hidden");
-      shopScreen.classList.remove("hidden");
-      document.body.style.overflow = "auto";
+    function makeBody(element, x, y, width, height, isBennett = false) {
+      return {
+        id: ++nextId, element, x, y, vx: 0, vy: 0, angle: 0, spin: 0,
+        width, height, isBennett, held: false, pointerId: null,
+        grabX: 0, grabY: 0, lastX: 0, lastY: 0, lastTime: 0, removed: false
+      };
     }
 
-    function collideTargets() {
-      if (state.entered || state.held) return;
-      const rect = bennett.getBoundingClientRect();
-      for (const target of targets) {
-        const box = target.getBoundingClientRect();
-        const overlaps = rect.right > box.left && rect.left < box.right && rect.bottom > box.top && rect.top < box.bottom;
-        if (overlaps && (Math.abs(state.vx) > 160 || Math.abs(state.vy) > 160)) {
-          openShop();
-          break;
-        }
-      }
+    const bodies = [];
+    const benBody = makeBody(bennett, 0, 0, bennettSize, bennettSize, true);
+    bodies.push(benBody);
+
+    function setPosition(body) {
+      body.element.style.left = `${body.x}px`;
+      body.element.style.top = `${body.y}px`;
+      body.element.style.transform = `translate(-50%, -50%) rotate(${body.angle}rad)`;
     }
 
-    bennett.addEventListener("pointerdown", (event) => {
-      event.preventDefault();
-      state.held = true;
-      state.pointerId = event.pointerId;
-      state.grabX = event.clientX - state.x;
-      state.grabY = event.clientY - state.y;
-      state.lastX = event.clientX;
-      state.lastY = event.clientY;
-      state.lastTime = performance.now();
-      state.vx = 0;
-      state.vy = 0;
-      bennett.setPointerCapture(event.pointerId);
-      bennett.classList.add("is-held");
-    });
-
-    bennett.addEventListener("pointermove", (event) => {
-      if (!state.held || event.pointerId !== state.pointerId) return;
-      const now = performance.now();
-      const elapsed = Math.max((now - state.lastTime) / 1000, .001);
-      const dx = event.clientX - state.lastX;
-      const dy = event.clientY - state.lastY;
-      state.vx = dx / elapsed;
-      state.vy = dy / elapsed;
-      state.spin = (dx - dy) * .012;
-      state.angle += state.spin;
-      state.x = event.clientX - state.grabX;
-      state.y = event.clientY - state.grabY;
-      state.lastX = event.clientX;
-      state.lastY = event.clientY;
-      state.lastTime = now;
-      drawBennett();
-      collideTargets();
-    });
-
-    function releaseBennett(event) {
-      if (!state.held || (event && event.pointerId !== state.pointerId)) return;
-      state.held = false;
-      state.pointerId = null;
-      bennett.classList.remove("is-held");
-      state.vx = Math.max(-1800, Math.min(1800, state.vx));
-      state.vy = Math.max(-1800, Math.min(1800, state.vy));
-    }
-    bennett.addEventListener("pointerup", releaseBennett);
-    bennett.addEventListener("pointercancel", releaseBennett);
-
-    let previous = performance.now();
-    function animate(now) {
-      const dt = Math.min((now - previous) / 1000, .032);
-      previous = now;
-      if (!state.held && !state.entered) {
-        state.vy += 1000 * dt;
-        state.x += state.vx * dt;
-        state.y += state.vy * dt;
-        state.angle += state.spin * dt * 30;
-        state.spin *= Math.pow(.985, dt * 60);
-        const half = size / 2;
-        if (state.x < half || state.x > innerWidth - half) {
-          state.x = Math.max(half, Math.min(innerWidth - half, state.x));
-          state.vx *= -.68;
-        }
-        if (state.y < half || state.y > innerHeight - half) {
-          state.y = Math.max(half, Math.min(innerHeight - half, state.y));
-          state.vy *= -.62;
-          if (Math.abs(state.vy) < 70) state.vy = 0;
-        }
-        drawBennett();
-        collideTargets();
-      }
-      requestAnimationFrame(animate);
+    function placeBennett() {
+      const bounds = stageBounds();
+      benBody.x = bounds.width * 0.66;
+      benBody.y = bounds.height - bennettSize / 2 - 12;
+      setPosition(benBody);
     }
 
     function updateMoney() {
-      const display = `$${money.toFixed(2)}`;
-      document.getElementById("balance-label").textContent = display;
-      document.querySelectorAll(".money").forEach((item) => item.textContent = display);
+      moneyDisplay.textContent = `$${money.toFixed(2)}`;
+      buyButton.disabled = money < 8;
+      buyButton.textContent = money >= 8 ? "Dispense · $8" : "Need $8";
     }
 
-    function toggleWallet() {
-      const card = document.getElementById("wallet-card");
-      const show = card.classList.contains("hidden");
-      card.classList.toggle("hidden", !show);
-      document.querySelectorAll("#wallet-button, #wallet-button-bottom").forEach((button) => button.setAttribute("aria-expanded", String(show)));
+    function playShake() {
+      if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      document.body.classList.remove("screen-shake");
+      void document.body.offsetWidth;
+      document.body.classList.add("screen-shake");
     }
-    document.getElementById("wallet-button").addEventListener("click", toggleWallet);
-    document.getElementById("wallet-button-bottom").addEventListener("click", toggleWallet);
 
-    const basket = document.getElementById("basket");
-    let draggingProduct = null;
-    document.querySelectorAll(".product").forEach((product) => {
-      product.addEventListener("pointerdown", (event) => {
-        draggingProduct = product;
-        product.setPointerCapture(event.pointerId);
-        product.style.opacity = ".55";
-      });
-      product.addEventListener("pointermove", (event) => {
-        if (draggingProduct !== product) return;
-        const rect = basket.getBoundingClientRect();
-        basket.classList.toggle("over", event.clientX >= rect.left && event.clientX <= rect.right && event.clientY >= rect.top && event.clientY <= rect.bottom);
-      });
-      function finishDrag(event) {
-        if (draggingProduct !== product) return;
-        const rect = basket.getBoundingClientRect();
-        const droppedInBasket = event.clientX >= rect.left && event.clientX <= rect.right && event.clientY >= rect.top && event.clientY <= rect.bottom;
-        product.style.opacity = "1";
-        basket.classList.remove("over");
-        if (droppedInBasket) {
-          if (money >= 2) {
-            money -= 2;
-            basketCount++;
-            const burger = document.createElement("img");
-            burger.src = "burger.png";
-            burger.alt = "Burger in shopping basket";
-            document.getElementById("basket-items").append(burger);
-            document.getElementById("cart-message").textContent = `${basketCount} burger${basketCount === 1 ? "" : "s"} in the basket. ${money.toFixed(2)} dollars left.`;
-            updateMoney();
+    function dispenseBurger() {
+      if (money < 8) {
+        status.textContent = "Bennett needs $8 for another burger.";
+        return;
+      }
+      money -= 8;
+      updateMoney();
+      const burger = document.createElement("img");
+      burger.className = "dropped-burger";
+      burger.src = "burger.png";
+      burger.alt = "Dispensed burger. Drag or throw it to Bennett to feed him.";
+      burger.draggable = false;
+      stage.append(burger);
+
+      const bounds = stageBounds();
+      const dispenser = document.querySelector(".dispenser").getBoundingClientRect();
+      const stageRect = stage.getBoundingClientRect();
+      const body = makeBody(
+        burger,
+        dispenser.left + dispenser.width / 2 - stageRect.left,
+        Math.max(burgerSize / 2, dispenser.bottom - stageRect.top + burgerSize / 2),
+        burgerSize,
+        burgerSize
+      );
+      body.vy = 35;
+      bodies.push(body);
+      setPosition(body);
+      status.textContent = "Burger dispensed! Drag or throw it to Bennett.";
+    }
+
+    buyButton.addEventListener("click", dispenseBurger);
+
+    function beginDrag(body, event) {
+      if (body.removed) return;
+      event.preventDefault();
+      body.held = true;
+      body.pointerId = event.pointerId;
+      const rect = stage.getBoundingClientRect();
+      const px = event.clientX - rect.left;
+      const py = event.clientY - rect.top;
+      body.grabX = px - body.x;
+      body.grabY = py - body.y;
+      body.lastX = px;
+      body.lastY = py;
+      body.lastTime = performance.now();
+      body.vx = 0;
+      body.vy = 0;
+      body.element.classList.add("held");
+      body.element.setPointerCapture(event.pointerId);
+    }
+
+    function moveDrag(body, event) {
+      if (!body.held || event.pointerId !== body.pointerId) return;
+      const now = performance.now();
+      const rect = stage.getBoundingClientRect();
+      const px = event.clientX - rect.left;
+      const py = event.clientY - rect.top;
+      const dt = Math.max((now - body.lastTime) / 1000, 0.008);
+      const dx = px - body.lastX;
+      const dy = py - body.lastY;
+      body.vx = dx / dt;
+      body.vy = dy / dt;
+      body.spin = (dx - dy) * 0.008;
+      body.angle += body.spin;
+      body.x = px - body.grabX;
+      body.y = py - body.grabY;
+      body.lastX = px;
+      body.lastY = py;
+      body.lastTime = now;
+      setPosition(body);
+      if (body.isBennett) feedCollisionCheck();
+      else feedCollisionCheck();
+    }
+
+    function endDrag(body, event) {
+      if (!body.held || (event && event.pointerId !== body.pointerId)) return;
+      body.held = false;
+      body.pointerId = null;
+      body.element.classList.remove("held");
+      body.vx = Math.max(-1900, Math.min(1900, body.vx));
+      body.vy = Math.max(-1900, Math.min(1900, body.vy));
+      feedCollisionCheck();
+    }
+
+    function attachDrag(body) {
+      body.element.addEventListener("pointerdown", (event) => beginDrag(body, event));
+      body.element.addEventListener("pointermove", (event) => moveDrag(body, event));
+      body.element.addEventListener("pointerup", (event) => endDrag(body, event));
+      body.element.addEventListener("pointercancel", (event) => endDrag(body, event));
+    }
+
+    function feedCollisionCheck() {
+      if (benBody.removed) return;
+      const benRadius = bennettSize * 0.34;
+      for (const body of bodies) {
+        if (body.isBennett || body.removed || body.held) continue;
+        const burgerRadius = body.width * 0.34;
+        const dx = body.x - benBody.x;
+        const dy = body.y - (benBody.y - 5);
+        if (Math.hypot(dx, dy) < benRadius + burgerRadius) eatBurger(body);
+      }
+    }
+
+    function eatBurger(body) {
+      if (body.removed) return;
+      body.removed = true;
+      body.element.classList.add("eating");
+      bennett.classList.remove("munch");
+      void bennett.offsetWidth;
+      bennett.classList.add("munch");
+      status.textContent = "Nom nom! Bennett ate a burger!";
+      playShake();
+      setTimeout(() => body.element.remove(), 500);
+      setTimeout(() => bennett.classList.remove("munch"), 600);
+    }
+
+    attachDrag(benBody);
+    addEventListener("pointerdown", (event) => {
+      const body = bodies.find((item) => item.element === event.target && !item.isBennett);
+      if (body) beginDrag(body, event);
+    });
+    addEventListener("pointermove", (event) => {
+      const body = bodies.find((item) => item.element === event.target && !item.isBennett);
+      if (body) moveDrag(body, event);
+    });
+    addEventListener("pointerup", (event) => {
+      const body = bodies.find((item) => item.pointerId === event.pointerId && !item.isBennett);
+      if (body) endDrag(body, event);
+    });
+    addEventListener("pointercancel", (event) => {
+      const body = bodies.find((item) => item.pointerId === event.pointerId && !item.isBennett);
+      if (body) endDrag(body, event);
+    });
+
+    function overlap(a, b) {
+      return Math.abs(a.x - b.x) < (a.width + b.width) * 0.36 && Math.abs(a.y - b.y) < (a.height + b.height) * 0.36;
+    }
+
+    function step(now) {
+      const dt = Math.min((now - step.last) / 1000, 0.032);
+      step.last = now;
+      const bounds = stageBounds();
+      const floorY = bounds.height - 12;
+
+      for (const body of bodies) {
+        if (body.removed || body.held) continue;
+        const halfW = body.width / 2;
+        const halfH = body.height / 2;
+        body.vy += gravity * dt;
+        body.x += body.vx * dt;
+        body.y += body.vy * dt;
+        body.angle += body.spin * dt * 30;
+        body.spin *= Math.pow(0.985, dt * 60);
+
+        if (body.x < halfW) {
+          body.x = halfW;
+          body.vx = Math.abs(body.vx) * wallBounce;
+          body.spin += body.vy * 0.001;
+        } else if (body.x > bounds.width - halfW) {
+          body.x = bounds.width - halfW;
+          body.vx = -Math.abs(body.vx) * wallBounce;
+          body.spin -= body.vy * 0.001;
+        }
+        if (body.y < halfH) {
+          body.y = halfH;
+          body.vy = Math.abs(body.vy) * wallBounce;
+        } else if (body.y > floorY - halfH) {
+          body.y = floorY - halfH;
+          if (Math.abs(body.vy) > 105) {
+            body.vy = -Math.abs(body.vy) * floorBounce;
+            body.vx *= 0.88;
           } else {
-            document.getElementById("cart-message").textContent = "Not enough money for another burger.";
+            body.vy = 0;
+            body.vx *= body.isBennett ? 0.9 : 0.94;
+            if (Math.abs(body.vx) < 14) body.vx = 0;
+          }
+          if (body.isBennett && Math.abs(body.vy) < 1 && Math.abs(body.angle) > 0.035) {
+            body.angle *= Math.max(0, 1 - dt * 2.4);
+            if (Math.abs(body.angle) < 0.04) body.angle = 0;
           }
         }
-        draggingProduct = null;
+        setPosition(body);
       }
-      product.addEventListener("pointerup", finishDrag);
-      product.addEventListener("pointercancel", finishDrag);
-    });
+      feedCollisionCheck();
+      requestAnimationFrame(step);
+    }
+    step.last = performance.now();
 
-    document.getElementById("checkout-button").addEventListener("click", () => {
-      document.getElementById("cart-message").textContent = basketCount ? `Checkout complete! Bennett bought ${basketCount} burger${basketCount === 1 ? "" : "s"}.` : "Add a burger to the basket first!";
+    document.body.addEventListener("animationend", (event) => {
+      if (event.animationName === "shake") document.body.classList.remove("screen-shake");
     });
-    document.getElementById("back-button").addEventListener("click", () => {
-      shopScreen.classList.add("hidden");
-      gameScreen.classList.remove("hidden");
-      document.body.style.overflow = "hidden";
-      state.entered = false;
-      state.x = innerWidth / 2;
-      state.y = innerHeight / 2;
-      state.vx = 0;
-      state.vy = 0;
-      state.angle = 0;
-      drawBennett();
-    });
-
     addEventListener("resize", () => {
-      if (!state.held && !state.entered) {
-        state.x = innerWidth / 2;
-        state.y = innerHeight / 2;
-        drawBennett();
+      const bounds = stageBounds();
+      for (const body of bodies) {
+        body.x = Math.max(body.width / 2, Math.min(bounds.width - body.width / 2, body.x));
+        body.y = Math.min(bounds.height - body.height / 2, body.y);
+        setPosition(body);
       }
     });
-    drawBennett();
-    requestAnimationFrame(animate);
+
+    placeBennett();
+    updateMoney();
+    requestAnimationFrame(step);
   </script>
 </body>
 </html>
