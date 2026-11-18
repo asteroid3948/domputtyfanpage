@@ -9,12 +9,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@600;700&display=swap" rel="stylesheet">
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
-    html,
-    body {
+    html, body {
       min-height: 100%;
       margin: 0;
     }
@@ -36,81 +33,177 @@
       animation: idle-bob 3s ease-in-out infinite;
     }
 
-    .walking-area {
-      position: fixed;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      height: 130px;
-      overflow: hidden;
-      pointer-events: none;
-    }
-
     .bennett {
-      position: absolute;
-      bottom: 0;
+      position: fixed;
+      z-index: 2;
+      top: 0;
       left: 0;
       width: 110px;
       height: 110px;
       object-fit: contain;
-      transform-origin: center bottom;
-      animation: walk-across 14s linear infinite, waddle 0.32s ease-in-out infinite alternate;
+      transform-origin: center;
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .bennett.is-held { cursor: grabbing; }
+
+    body.screen-shake {
+      animation: screen-shake 0.55s cubic-bezier(.36,.07,.19,.97) both;
     }
 
     @keyframes idle-bob {
-      0%,
-      100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-6px);
-      }
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
     }
 
-    @keyframes walk-across {
-      0%,
-      49.9% {
-        left: 0;
-        transform: scaleX(1);
-      }
-      50%,
-      99.9% {
-        left: calc(100% - 110px);
-        transform: scaleX(-1);
-      }
-      100% {
-        left: 0;
-        transform: scaleX(1);
-      }
-    }
-
-    @keyframes waddle {
-      from {
-        translate: 0 0;
-        rotate: -4deg;
-      }
-      to {
-        translate: 0 -3px;
-        rotate: 4deg;
-      }
+    @keyframes screen-shake {
+      0%, 100% { transform: translate(0, 0) rotate(0); }
+      12%, 36%, 60%, 84% { transform: translate(-7px, 3px) rotate(-0.25deg); }
+      24%, 48%, 72%, 96% { transform: translate(7px, -3px) rotate(0.25deg); }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      h1 {
-        animation: none;
-      }
-
-      .bennett {
-        animation: none;
-        left: calc(50% - 55px);
-      }
+      h1 { animation: none; }
+      body.screen-shake { animation: none; }
     }
   </style>
 </head>
 <body>
   <h1>Dom Putty Fanpage</h1>
-  <div class="walking-area" aria-hidden="true">
-    <img class="bennett" src="bs.png" alt="">
-  </div>
+  <img class="bennett" id="bennett" src="bs.png" alt="Bennett Speller waddling around. Drag to pick him up and spin him, then release to drop him." draggable="false">
+
+  <script>
+    const bennett = document.getElementById("bennett");
+    const size = 110;
+    const state = {
+      x: 55,
+      y: innerHeight - size / 2,
+      angle: 0,
+      direction: 1,
+      held: false,
+      recovering: false,
+      pointerId: null,
+      grabX: 0,
+      grabY: 0,
+      lastPointerX: 0,
+      lastPointerY: 0,
+      lastMoveTime: 0,
+      stepTime: 0,
+      recoveryStart: 0,
+      recoveryFrom: 0,
+      recoveryTo: 0
+    };
+
+    function drawBennett(bob = 0) {
+      bennett.style.left = `${state.x}px`;
+      bennett.style.top = `${state.y + bob}px`;
+      bennett.style.transform = `translate(-50%, -50%) rotate(${state.angle}rad) scaleX(${state.direction})`;
+    }
+
+    function shakeScreen() {
+      document.body.classList.remove("screen-shake");
+      void document.body.offsetWidth;
+      document.body.classList.add("screen-shake");
+    }
+
+    bennett.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      state.held = true;
+      state.recovering = false;
+      state.pointerId = event.pointerId;
+      state.grabX = event.clientX - state.x;
+      state.grabY = event.clientY - state.y;
+      state.lastPointerX = event.clientX;
+      state.lastPointerY = event.clientY;
+      state.lastMoveTime = performance.now();
+      bennett.classList.add("is-held");
+      bennett.setPointerCapture(event.pointerId);
+    });
+
+    bennett.addEventListener("pointermove", (event) => {
+      if (!state.held || event.pointerId !== state.pointerId) return;
+      const dx = event.clientX - state.lastPointerX;
+      const dy = event.clientY - state.lastPointerY;
+      // Moving the pointer spins Bennett around the point where he was grabbed.
+      state.angle += (dx - dy * 0.45) * 0.012;
+      state.x = event.clientX - (state.grabX * Math.cos(state.angle) - state.grabY * Math.sin(state.angle));
+      state.y = event.clientY - (state.grabX * Math.sin(state.angle) + state.grabY * Math.cos(state.angle));
+      state.direction = dx < -1 ? -1 : dx > 1 ? 1 : state.direction;
+      state.lastPointerX = event.clientX;
+      state.lastPointerY = event.clientY;
+      state.lastMoveTime = performance.now();
+      drawBennett();
+    });
+
+    function dropBennett(event) {
+      if (!state.held || (event && event.pointerId !== state.pointerId)) return;
+      state.held = false;
+      state.pointerId = null;
+      state.recovering = true;
+      state.recoveryStart = performance.now();
+      state.recoveryFrom = state.angle;
+      // He flops over on landing, then rights himself even if upside down.
+      const flop = state.angle + (state.direction > 0 ? 1 : -1) * (Math.PI * 0.72);
+      state.recoveryTo = Math.round(flop / (Math.PI * 2)) * Math.PI * 2;
+      bennett.classList.remove("is-held");
+      shakeScreen();
+    }
+
+    bennett.addEventListener("pointerup", dropBennett);
+    bennett.addEventListener("pointercancel", dropBennett);
+    document.body.addEventListener("animationend", (event) => {
+      if (event.animationName === "screen-shake") document.body.classList.remove("screen-shake");
+    });
+
+    let previousTime = performance.now();
+    function animate(now) {
+      const delta = Math.min((now - previousTime) / 1000, 0.05);
+      previousTime = now;
+      let bob = 0;
+
+      if (!state.held && !state.recovering) {
+        state.x += state.direction * 190 * delta;
+        if (state.x >= innerWidth - size / 2) {
+          state.x = innerWidth - size / 2;
+          state.direction = -1;
+        } else if (state.x <= size / 2) {
+          state.x = size / 2;
+          state.direction = 1;
+        }
+        state.stepTime += delta * 16;
+        bob = Math.sin(state.stepTime) * 3;
+        state.angle = Math.sin(state.stepTime) * 0.07;
+        state.y = innerHeight - size / 2 - Math.abs(Math.sin(state.stepTime)) * 2;
+      } else if (state.recovering) {
+        const progress = Math.min((now - state.recoveryStart) / 1100, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        state.angle = state.recoveryFrom + (state.recoveryTo - state.recoveryFrom) * eased;
+        state.y = innerHeight - size / 2 - Math.sin(progress * Math.PI) * 18;
+        if (progress === 1) {
+          state.recovering = false;
+          state.angle = 0;
+        }
+      }
+
+      if (!state.held) drawBennett(bob);
+      requestAnimationFrame(animate);
+    }
+
+    function keepBennettOnScreen() {
+      if (!state.held) {
+        state.x = Math.max(size / 2, Math.min(innerWidth - size / 2, state.x));
+        if (!state.recovering) state.y = innerHeight - size / 2;
+      }
+      drawBennett();
+    }
+
+    addEventListener("resize", keepBennettOnScreen);
+    state.y = innerHeight - size / 2;
+    drawBennett();
+    requestAnimationFrame(animate);
+  </script>
 </body>
 </html>
