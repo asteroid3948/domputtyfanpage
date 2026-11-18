@@ -19,31 +19,27 @@
     .top-actions { position: absolute; top: 18px; right: 22px; display: flex; align-items: center; gap: 16px; }
     .coins { padding: 7px 9px; border: 1px solid transparent; border-radius: 8px; color: #bfc8c2; font-size: .9rem; transition: background .15s, border-color .15s; }
     .coins strong { display: inline-block; margin-left: 5px; color: #7be397; font-size: 1.12rem; }
-    .coins.money-target { border-color: #7be397; background: #7be39720; }
     .buy-button { border: 1px solid #78cd8e; border-radius: 9px; padding: 9px 12px; background: transparent; color: #bff1cc; font-weight: 800; cursor: pointer; }
     .buy-button:hover:not(:disabled) { background: #78cd8e18; }
     .buy-button:disabled { cursor: not-allowed; opacity: .42; }
-
     .tube { position: absolute; z-index: 7; top: -18px; left: 50%; width: 22px; height: 94px; transform: translateX(-50%); border: 2px solid #7d8981; border-radius: 0 0 11px 11px; background: linear-gradient(90deg, #69766e, #b2bdb5 48%, #69766e); }
     .tube::after { position: absolute; bottom: -7px; left: 50%; width: 34px; height: 10px; transform: translateX(-50%); border-radius: 0 0 6px 6px; background: #69766e; content: ""; }
 
     #stage { position: fixed; z-index: 1; inset: 112px 0 0; overflow: hidden; background: radial-gradient(ellipse at 50% 35%, #26312a, #111714 68%, #0c100e); }
-    #stage::after { position: absolute; right: 0; bottom: 0; left: 0; height: 15px; background: #596359; content: ""; }
+    #stage::after { position: absolute; right: 0; bottom: 0; left: 0; height: 15px; background: #596359; content: ""; pointer-events: none; }
     .character, .physics-item { position: absolute; z-index: 2; width: 116px; height: 116px; object-fit: contain; cursor: grab; touch-action: none; user-select: none; -webkit-user-drag: none; will-change: left, top, transform; }
     .character { width: 132px; height: 132px; z-index: 3; }
     .character.held, .physics-item.held { cursor: grabbing; }
     .physics-item { z-index: 4; }
     .physics-item.consuming { pointer-events: none; animation: item-consumed .38s ease-in forwards; }
 
-    .conversion { position: fixed; z-index: 6; display: none; width: 208px; padding: 10px 12px 12px; border: 1px solid #ffffff50; border-radius: 13px; background: #f6f7f3; color: #26332a; box-shadow: 0 7px 24px #0005; text-align: center; pointer-events: none; }
-    .conversion.visible { display: block; animation: pop-in .28s cubic-bezier(.2, 1.5, .5, 1) both; }
-    .conversion-label { margin-bottom: 7px; font-size: .8rem; font-weight: 800; }
-    .progress-track { height: 10px; overflow: hidden; border-radius: 10px; background: #d7ddd7; }
+    .conversion { position: fixed; z-index: 6; display: none; width: 92px; height: 22px; overflow: hidden; border: 1px solid #ffffff55; border-radius: 12px; background: #d7ddd7; box-shadow: 0 3px 12px #0005; pointer-events: none; }
+    .conversion.visible { display: block; }
     .progress-fill { width: 0; height: 100%; border-radius: inherit; background: #78cd8e; transition: width .05s linear; }
+    .progress-percent { position: absolute; inset: 0; display: grid; place-items: center; color: #15241a; font-size: .72rem; font-weight: 800; text-shadow: 0 1px #ffffff90; }
     .status { position: fixed; z-index: 4; right: 12px; bottom: 20px; left: 12px; margin: 0; color: #bdc7c0; font-size: .82rem; text-align: center; pointer-events: none; }
     body.screen-shake { animation: shake .38s linear; }
 
-    @keyframes pop-in { from { opacity: 0; transform: translateY(12px) scale(.8); } to { opacity: 1; transform: translateY(0) scale(1); } }
     @keyframes item-consumed { 0% { opacity: 1; scale: 1; } 100% { opacity: 0; scale: .08; translate: 0 22px; } }
     @keyframes munch { 0%, 100% { scale: 1; } 22% { scale: 1.12 .82; } 48% { scale: .9 1.12; } 72% { scale: 1.08 .9; } }
     @keyframes shake { 0%, 100% { translate: 0 0; } 20%, 60% { translate: -5px 2px; } 40%, 80% { translate: 5px -2px; } }
@@ -57,7 +53,7 @@
       #stage { inset-block-start: 118px; }
       .character { width: 112px; height: 112px; }
       .physics-item { width: 94px; height: 94px; }
-      .conversion { width: 180px; }
+      .conversion { width: 78px; height: 20px; }
     }
     @media (prefers-reduced-motion: reduce) { body.screen-shake { animation: none; } }
   </style>
@@ -67,31 +63,29 @@
     <h1 class="brand">Dom Putty Fanpage</h1>
     <div class="tube" aria-label="Burger dispenser tube"></div>
     <div class="top-actions">
-      <div class="coins" id="coin-target" aria-label="Coin balance drop target">Coins <strong id="coins">10</strong></div>
+      <div class="coins" aria-label="Coin balance">Coins <strong id="coins">10</strong></div>
       <button class="buy-button" id="buy-button" type="button">Buy Burger · 8</button>
     </div>
   </header>
 
   <main id="stage" aria-label="Burger play area">
-    <img class="character" id="bennett" src="bs.png" alt="Bennett Speller" draggable="false">
+    <img class="character" id="bennett" src="bs.png" alt="Bennett Speller. Drag him or drag items onto him." draggable="false">
   </main>
-  <div class="conversion" id="conversion" role="status" aria-live="polite">
-    <div class="conversion-label" id="conversion-label">Hover over Bennett</div>
-    <div class="progress-track" role="progressbar" aria-label="Burger converting to Snickers" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-fill" id="progress-fill"></div></div>
+  <div class="conversion" id="conversion" role="progressbar" aria-label="Burger to Snickers progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+    <div class="progress-fill" id="progress-fill"></div>
+    <span class="progress-percent" id="progress-percent">0%</span>
   </div>
-  <p class="status" id="status" role="status" aria-live="polite">Buy burgers, drag them to Bennett, then drop dollar notes on Coins.</p>
+  <p class="status" id="status" role="status" aria-live="polite">Drag burgers onto Bennett. Drag Snickers to Tom, then dollar notes onto Bennett.</p>
 
   <script>
     const stage = document.getElementById("stage");
     const bennett = document.getElementById("bennett");
     const buyButton = document.getElementById("buy-button");
     const coinsDisplay = document.getElementById("coins");
-    const coinTarget = document.getElementById("coin-target");
     const status = document.getElementById("status");
     const conversion = document.getElementById("conversion");
-    const conversionLabel = document.getElementById("conversion-label");
     const progressFill = document.getElementById("progress-fill");
-    const progressBar = document.querySelector(".progress-track");
+    const progressPercent = document.getElementById("progress-percent");
     const gravity = 1250;
     const floorBounce = 0.62;
     const wallBounce = 0.72;
@@ -101,7 +95,6 @@
     let converting = false;
     let conversionQueue = 0;
     let conversionStartedAt = 0;
-    let currentConversionDuration = conversionTimePerBurger;
     let nextId = 0;
 
     function stageBounds() { return { width: stage.clientWidth, height: stage.clientHeight }; }
@@ -144,9 +137,9 @@
     function updateConversionPosition() {
       if (!converting) return;
       const rect = bennett.getBoundingClientRect();
-      const width = conversion.offsetWidth || 208;
+      const width = conversion.offsetWidth || 92;
       conversion.style.left = `${Math.max(8, Math.min(innerWidth - width - 8, rect.left + rect.width / 2 - width / 2))}px`;
-      conversion.style.top = `${Math.max(8, rect.top - conversion.offsetHeight - 10)}px`;
+      conversion.style.top = `${Math.max(8, rect.top - conversion.offsetHeight - 8)}px`;
     }
 
     function startNextConversion() {
@@ -154,15 +147,13 @@
         converting = false;
         conversion.classList.remove("visible");
         progressFill.style.width = "0%";
-        progressBar.setAttribute("aria-valuenow", "0");
-        status.textContent = "Snickers bar made! Drag it to Bennett for a $2 note.";
+        progressPercent.textContent = "0%";
+        conversion.setAttribute("aria-valuenow", "0");
         return;
       }
       converting = true;
       conversionQueue--;
-      currentConversionDuration = conversionTimePerBurger;
       conversionStartedAt = performance.now();
-      conversionLabel.textContent = conversionQueue ? `Hover over Bennett · ${conversionQueue + 1} queued` : "Hover over Bennett";
       conversion.classList.add("visible");
       updateConversionPosition();
     }
@@ -170,7 +161,6 @@
     function enqueueConversion() {
       conversionQueue++;
       if (!converting) startNextConversion();
-      else conversionLabel.textContent = `Hover over Bennett · ${conversionQueue + 1} queued`;
     }
 
     function spawnPhysicsItem(kind, src, x, y, vx, vy, width, height, alt) {
@@ -183,7 +173,7 @@
       const body = makeBody(item, x, y, width, height, kind);
       body.vx = vx;
       body.vy = vy;
-      body.spin = kind === "snickers" ? -0.07 : kind === "tom" ? 0.09 : 0.04;
+      body.spin = kind === "snickers" ? -.07 : kind === "tom" ? .025 : .04;
       bodies.push(body);
       attachDrag(body);
       setPosition(body);
@@ -191,12 +181,17 @@
     }
 
     function shootRewards() {
-      // Snickers and Tom pop out from behind Bennett with slightly different trajectories.
-      const backX = benBody.x - 26;
-      const backY = benBody.y - 28;
-      spawnPhysicsItem("snickers", "bar.png", backX, backY, -340, -500, 94, 58, "Snickers bar. Drag it to Bennett.");
-      spawnPhysicsItem("tom", "tom.jpeg", benBody.x + 24, backY - 5, 290, -430, 78, 78, "Tom pops out with the Snickers reward.");
-      status.textContent = "A Snickers bar popped out! Drag it to Bennett.";
+      const bounds = stageBounds();
+      const barX = Math.max(55, benBody.x - 42);
+      const barY = Math.max(70, benBody.y - 42);
+      spawnPhysicsItem("snickers", "bar.png", barX, barY, -330, -460, 92, 56, "Snickers bar. Drag it onto Tom.");
+      // Tom enters from the opposite side and remains a separate target: items do not collide automatically.
+      const tomX = Math.min(bounds.width - 55, benBody.x + Math.min(210, bounds.width * .27));
+      const tomY = Math.max(80, benBody.y - 70);
+      const tom = spawnPhysicsItem("tom", "tom.jpeg", tomX, tomY, tomX > benBody.x ? -115 : 115, -80, 72, 72, "Tom. Drop a Snickers on him.");
+      tom.vy = 0;
+      tom.spin = 0;
+      status.textContent = "Drag the Snickers onto Tom.";
       playShake();
     }
 
@@ -204,7 +199,8 @@
       converting = false;
       conversion.classList.remove("visible");
       progressFill.style.width = "0%";
-      progressBar.setAttribute("aria-valuenow", "0");
+      progressPercent.textContent = "0%";
+      conversion.setAttribute("aria-valuenow", "0");
       shootRewards();
       if (conversionQueue > 0) startNextConversion();
     }
@@ -220,8 +216,8 @@
       const stageRect = stage.getBoundingClientRect();
       const x = tube.left + tube.width / 2 - stageRect.left;
       const y = Math.max(50, tube.bottom - stageRect.top + 44);
-      spawnPhysicsItem("burger", "burger.png", x, y, (Math.random() - .5) * 55, 55, 92, 92, "Burger. Drag or throw it to Bennett.");
-      status.textContent = "Burger dispensed. Drag it to Bennett.";
+      spawnPhysicsItem("burger", "burger.png", x, y, (Math.random() - .5) * 55, 55, 92, 92, "Burger. Drag it onto Bennett to feed him.");
+      status.textContent = "Drag the burger onto Bennett.";
     }
     buyButton.addEventListener("click", dispenseBurger);
 
@@ -263,31 +259,88 @@
       body.lastY = py;
       body.lastTime = now;
       setPosition(body);
-      if (body.kind === "snickers") tryFeedWithSnickers(body);
       updateConversionPosition();
+    }
+
+    function pointInsideElement(x, y, element) {
+      const rect = element.getBoundingClientRect();
+      return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+    }
+
+    function itemDroppedOn(body, target) {
+      const rect = body.element.getBoundingClientRect();
+      return pointInsideElement(rect.left + rect.width / 2, rect.top + rect.height / 2, target);
+    }
+
+    function removeBody(body) {
+      if (body.removed) return;
+      body.removed = true;
+      body.element.remove();
+    }
+
+    function animateConsume(element, callback) {
+      element.classList.add("consuming");
+      element.addEventListener("animationend", callback, { once: true });
+    }
+
+    function eatBurger(body) {
+      if (body.removed) return;
+      body.removed = true;
+      animateConsume(body.element, () => body.element.remove());
+      bennett.classList.remove("munch");
+      void bennett.offsetWidth;
+      bennett.classList.add("munch");
+      status.textContent = "Burger eaten. Converting…";
+      playShake();
+      setTimeout(() => bennett.classList.remove("munch"), 600);
+      enqueueConversion();
+    }
+
+    function spitOutDollars() {
+      const startX = benBody.x;
+      const startY = benBody.y - 36;
+      spawnPhysicsItem("money", "dal.png", startX - 18, startY, -125, -290, 54, 38, "$1 note. Drag it onto Bennett.");
+      spawnPhysicsItem("money", "dal.png", startX + 18, startY - 5, 125, -330, 54, 38, "$1 note. Drag it onto Bennett.");
+      status.textContent = "Tom gave Bennett two $1 notes. Drag each note onto Bennett.";
+    }
+
+    function acceptSnickers(body) {
+      removeBody(body);
+      const tom = bodies.find((item) => item.kind === "tom" && !item.removed);
+      if (tom) {
+        // A brief squash makes Tom react without the Snickers physically striking him.
+        tom.element.animate([{ scale: "1" }, { scale: "1.08 .92" }, { scale: "1" }], { duration: 300, easing: "ease-out" });
+      }
+      spitOutDollars();
+    }
+
+    function acceptDollar(body) {
+      removeBody(body);
+      coins += 1;
+      updateCoins();
+      bennett.classList.remove("munch");
+      void bennett.offsetWidth;
+      bennett.classList.add("munch");
+      status.textContent = "Bennett took a dollar. +1 coin.";
+      setTimeout(() => bennett.classList.remove("munch"), 600);
     }
 
     function endDrag(body, event) {
       if (!body.held || (event && event.pointerId !== body.pointerId)) return;
-      const coinRect = coinTarget.getBoundingClientRect();
-      const releasedOnCoins = event && event.clientX >= coinRect.left && event.clientX <= coinRect.right && event.clientY >= coinRect.top && event.clientY <= coinRect.bottom;
+      const releasedOnBennett = itemDroppedOn(body, bennett);
+      const tom = bodies.find((item) => item.kind === "tom" && !item.removed);
+      const releasedOnTom = body.kind === "snickers" && tom && itemDroppedOn(body, tom.element);
+
       body.held = false;
       body.pointerId = null;
       body.element.classList.remove("held");
       body.vx = Math.max(-1900, Math.min(1900, body.vx));
       body.vy = Math.max(-1900, Math.min(1900, body.vy));
 
-      if (body.kind === "money" && releasedOnCoins) {
-        coins += 2;
-        updateCoins();
-        removeBody(body);
-        status.textContent = "Collected $2!";
-        coinTarget.classList.add("money-target");
-        setTimeout(() => coinTarget.classList.remove("money-target"), 500);
-        return;
-      }
-      if (body.kind === "snickers") tryFeedWithSnickers(body);
-      else if (body.kind === "burger") checkBurgerCollisions();
+      // Gameplay actions only occur on a deliberate pointer release over the target.
+      if (body.kind === "burger" && releasedOnBennett) eatBurger(body);
+      else if (body.kind === "snickers" && releasedOnTom) acceptSnickers(body);
+      else if (body.kind === "money" && releasedOnBennett) acceptDollar(body);
     }
 
     function attachDrag(body) {
@@ -297,55 +350,13 @@
       body.element.addEventListener("pointercancel", (event) => endDrag(body, event));
     }
 
-    function distanceBetween(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
-
-    function removeBody(body) {
-      if (body.removed) return;
-      body.removed = true;
-      body.element.remove();
-    }
-
-    function eatBurger(body) {
-      if (body.removed) return;
-      body.element.classList.add("consuming");
-      body.element.style.pointerEvents = "none";
-      body.removed = true;
-      bennett.classList.remove("munch");
-      void bennett.offsetWidth;
-      bennett.classList.add("munch");
-      status.textContent = "Bennett ate a burger. It's turning into a Snickers…";
-      playShake();
-      setTimeout(() => body.element.remove(), 400);
-      setTimeout(() => bennett.classList.remove("munch"), 600);
-      enqueueConversion();
-    }
-
-    function checkBurgerCollisions() {
-      for (const body of bodies) {
-        if (body.kind !== "burger" || body.removed || body.held) continue;
-        if (distanceBetween(body, benBody) < 70) eatBurger(body);
-      }
-    }
-
-    function tryFeedWithSnickers(body) {
-      if (!body || body.removed || body.held) return;
-      if (distanceBetween(body, benBody) < 78) {
-        removeBody(body);
-        spawnPhysicsItem("money", "dal.png", benBody.x + 12, benBody.y - 48, 80, -380, 72, 48, "$2 note. Drag it onto Coins to collect.");
-        status.textContent = "Bennett traded you a $2 note. Drag it to Coins.";
-        bennett.classList.remove("munch");
-        void bennett.offsetWidth;
-        bennett.classList.add("munch");
-        setTimeout(() => bennett.classList.remove("munch"), 600);
-      }
-    }
-
     function updateConversion(now) {
       if (!converting) return;
-      const progress = Math.min((now - conversionStartedAt) / currentConversionDuration, 1);
-      const percent = Math.round(progress * 100);
+      const progress = Math.min((now - conversionStartedAt) / conversionTimePerBurger, 1);
+      const percent = Math.floor(progress * 100);
       progressFill.style.width = `${percent}%`;
-      progressBar.setAttribute("aria-valuenow", String(percent));
+      progressPercent.textContent = `${percent}%`;
+      conversion.setAttribute("aria-valuenow", String(percent));
       updateConversionPosition();
       if (progress >= 1) finishConversion();
     }
@@ -376,18 +387,6 @@
           if (body.kind === "bennett" && Math.abs(body.vy) < 1) body.angle *= Math.max(0, 1 - dt * 2.4);
         }
         setPosition(body);
-      }
-      checkBurgerCollisions();
-      for (const body of bodies) {
-        if (body.kind === "snickers" && !body.removed && !body.held && distanceBetween(body, benBody) < 70) {
-          removeBody(body);
-          spawnPhysicsItem("money", "dal.png", benBody.x + 12, benBody.y - 48, 80, -380, 72, 48, "$2 note. Drag it onto Coins to collect.");
-          status.textContent = "Bennett traded you a $2 note. Drag it to Coins.";
-          bennett.classList.remove("munch");
-          void bennett.offsetWidth;
-          bennett.classList.add("munch");
-          setTimeout(() => bennett.classList.remove("munch"), 600);
-        }
       }
       updateConversion(now);
       requestAnimationFrame(step);
