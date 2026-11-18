@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#101513">
-  <title>Dom Putty Fanpage — Bennett's Burger Shop</title>
+  <title>Dom Putty Fanpage — Burger Shop</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -24,81 +24,82 @@
       position: fixed;
       z-index: 5;
       inset: 0 0 auto;
-      height: 142px;
+      height: 112px;
       padding: 18px 22px;
-      border-bottom: 1px solid #ffffff16;
-      background: linear-gradient(180deg, #1a211e, #131916);
+      border-bottom: 1px solid #ffffff12;
+      background: #171d1a;
     }
-    .brand { position: absolute; top: 16px; left: 22px; margin: 0; font-size: clamp(1.05rem, 2.8vw, 1.65rem); letter-spacing: -.04em; }
-    .shop-card {
+    .brand {
       position: absolute;
-      top: 56px;
+      top: 18px;
       left: 22px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 12px;
-      border: 1px solid #ffffff1a;
-      border-radius: 14px;
-      background: #ffffff0b;
+      margin: 0;
+      font-size: clamp(1.05rem, 2.8vw, 1.65rem);
+      letter-spacing: -.04em;
     }
-    .product-icon { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 10px; background: #fff; }
-    .product-icon img { width: 36px; height: 36px; object-fit: contain; }
-    .product-info strong, .product-info span { display: block; }
-    .product-info span { margin-top: 2px; color: #b8c5bb; font-size: .82rem; }
-    .buy-button {
-      border: 0;
-      border-radius: 10px;
-      padding: 10px 12px;
-      background: #58c778;
-      color: #102016;
-      font-weight: 800;
-      cursor: pointer;
-    }
-    .buy-button:hover:not(:disabled) { background: #77df92; }
-    .buy-button:disabled { cursor: not-allowed; opacity: .48; }
-    .wallet {
+
+    .top-actions {
       position: absolute;
-      top: 20px;
+      top: 18px;
       right: 22px;
       display: flex;
       align-items: center;
-      gap: 9px;
-      padding: 10px 14px;
-      border: 1px solid #ffffff1c;
-      border-radius: 12px;
-      background: #ffffff0b;
+      gap: 16px;
     }
-    .wallet-icon { font-size: 1.4rem; }
-    .wallet-label { color: #aab8ae; font-size: .75rem; }
-    .wallet-amount { color: #6de28c; font-size: 1.15rem; font-weight: 800; }
-    .dispenser {
+    .coins { color: #bfc8c2; font-size: .9rem; }
+    .coins strong { display: inline-block; margin-left: 5px; color: #7be397; font-size: 1.12rem; }
+    .buy-button {
+      border: 1px solid #78cd8e;
+      border-radius: 9px;
+      padding: 9px 12px;
+      background: transparent;
+      color: #bff1cc;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .buy-button:hover:not(:disabled) { background: #78cd8e18; }
+    .buy-button:disabled { cursor: not-allowed; opacity: .42; }
+
+    .tube {
       position: absolute;
-      top: 12px;
+      z-index: 7;
+      top: -18px;
       left: 50%;
-      width: 116px;
-      height: 118px;
+      width: 22px;
+      height: 94px;
       transform: translateX(-50%);
-      border: 3px solid #75827a;
-      border-radius: 15px 15px 9px 9px;
-      background: linear-gradient(135deg, #d9e0db, #8c9990 56%, #67746b);
-      box-shadow: 0 8px 18px #0005, inset 0 2px 6px #fff9;
-      text-align: center;
+      border: 2px solid #7d8981;
+      border-radius: 0 0 11px 11px;
+      background: linear-gradient(90deg, #69766e, #b2bdb5 48%, #69766e);
     }
-    .dispenser-name { padding-top: 9px; color: #24352a; font-size: .78rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
-    .dispenser-window { width: 72px; height: 35px; margin: 7px auto 0; border: 3px solid #59665d; border-radius: 7px; background: linear-gradient(135deg, #fafcf9, #b9c9bd); }
-    .dispenser-chute { position: absolute; bottom: -11px; left: 37px; width: 42px; height: 13px; border: 3px solid #68756c; border-top: 0; border-radius: 0 0 5px 5px; background: #39453d; }
-    .dispenser-label { position: absolute; right: 0; bottom: 1px; left: 0; color: #425047; font-size: .58rem; font-weight: 700; }
+    .tube::after {
+      position: absolute;
+      bottom: -7px;
+      left: 50%;
+      width: 34px;
+      height: 10px;
+      transform: translateX(-50%);
+      border-radius: 0 0 6px 6px;
+      background: #69766e;
+      content: "";
+    }
 
     #stage {
       position: fixed;
       z-index: 1;
-      inset: 142px 0 0;
+      inset: 112px 0 0;
       overflow: hidden;
       background: radial-gradient(ellipse at 50% 35%, #26312a, #111714 68%, #0c100e);
     }
-    #stage::after { position: absolute; right: 0; bottom: 0; left: 0; height: 15px; background: linear-gradient(#75816d, #4a5447); box-shadow: 0 -7px 22px #0005; content: ""; }
-    .hint { position: absolute; z-index: 1; top: 15px; left: 50%; width: max-content; max-width: calc(100% - 24px); transform: translateX(-50%); color: #cad3cc; font-size: .9rem; text-align: center; }
+    #stage::after {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: 15px;
+      background: #596359;
+      content: "";
+    }
     .character, .dropped-burger {
       position: absolute;
       z-index: 2;
@@ -113,10 +114,21 @@
     }
     .character { width: 132px; height: 132px; z-index: 3; }
     .character.held, .dropped-burger.held { cursor: grabbing; }
-    .dropped-burger { padding: 9px; border: 1px solid #ffffffa0; border-radius: 50%; background: #fff; box-shadow: 0 8px 22px #0005; }
+    .dropped-burger { z-index: 4; }
     .dropped-burger.eating { pointer-events: none; animation: burger-eaten .48s ease-in forwards; }
     .character.munch { animation: munch .56s ease-in-out; }
-    .status { position: fixed; z-index: 4; right: 12px; bottom: 20px; left: 12px; margin: 0; color: #d3ded5; font-size: .88rem; text-align: center; pointer-events: none; }
+    .status {
+      position: fixed;
+      z-index: 4;
+      right: 12px;
+      bottom: 20px;
+      left: 12px;
+      margin: 0;
+      color: #bdc7c0;
+      font-size: .82rem;
+      text-align: center;
+      pointer-events: none;
+    }
     body.screen-shake { animation: shake .38s linear; }
 
     @keyframes munch {
@@ -136,67 +148,46 @@
       40%, 80% { translate: 5px -2px; }
     }
     @media (max-width: 600px) {
-      .topbar { height: 174px; padding: 12px; }
+      .topbar { height: 118px; }
       .brand { top: 12px; left: 12px; }
-      .shop-card { top: 58px; left: 10px; gap: 7px; padding: 8px; }
-      .product-icon { width: 34px; height: 34px; }
-      .product-icon img { width: 30px; height: 30px; }
-      .buy-button { padding: 9px; font-size: .8rem; }
-      .wallet { top: 10px; right: 10px; gap: 6px; padding: 7px 9px; }
-      .wallet-icon { font-size: 1.1rem; }
-      .wallet-amount { font-size: 1rem; }
-      .dispenser { top: 95px; width: 82px; height: 72px; border-width: 2px; border-radius: 10px 10px 6px 6px; }
-      .dispenser-name { padding-top: 5px; font-size: .6rem; }
-      .dispenser-window { width: 50px; height: 21px; margin-top: 4px; border-width: 2px; }
-      .dispenser-chute { bottom: -8px; left: 26px; width: 28px; height: 10px; border-width: 2px; }
-      .dispenser-label { display: none; }
-      #stage { inset-block-start: 174px; }
+      .top-actions { top: 50px; right: 12px; gap: 9px; }
+      .tube { top: -18px; width: 18px; height: 82px; }
+      #stage { inset-block-start: 118px; }
       .character { width: 112px; height: 112px; }
       .dropped-burger { width: 94px; height: 94px; }
-      .hint { top: 10px; font-size: .78rem; }
     }
-    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; } body.screen-shake { animation: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      body.screen-shake { animation: none; }
+    }
   </style>
 </head>
 <body>
   <header class="topbar">
     <h1 class="brand">Dom Putty Fanpage</h1>
-    <section class="shop-card" aria-label="Shop menu">
-      <span class="product-icon"><img src="burger.png" alt=""></span>
-      <span class="product-info"><strong>Burger</strong><span>One burger · $8</span></span>
-      <button class="buy-button" id="buy-button" type="button">Dispense · $8</button>
-    </section>
-    <div class="dispenser" aria-label="Burger dispenser">
-      <div class="dispenser-name">Burger dispenser</div>
-      <div class="dispenser-window"></div>
-      <div class="dispenser-chute"></div>
-      <div class="dispenser-label">PUSH TO DISPENSE</div>
+    <div class="tube" aria-label="Burger dispenser tube"></div>
+    <div class="top-actions">
+      <div class="coins">Coins <strong id="coins">10</strong></div>
+      <button class="buy-button" id="buy-button" type="button">Buy Burger · 8</button>
     </div>
-    <aside class="wallet" aria-label="Bennett's wallet">
-      <span class="wallet-icon" aria-hidden="true">👛</span>
-      <span><span class="wallet-label">Bennett's money</span><strong class="wallet-amount" id="money">$10.00</strong></span>
-    </aside>
   </header>
 
-  <main id="stage" aria-label="Burger shop play area">
-    <p class="hint">Buy a burger, then drag or throw it to Bennett to feed him!</p>
-    <img class="character" id="bennett" src="bs.png" alt="Bennett Speller. Drag him around, or toss burgers to feed him." draggable="false">
+  <main id="stage" aria-label="Burger play area">
+    <img class="character" id="bennett" src="bs.png" alt="Bennett Speller" draggable="false">
   </main>
-  <p class="status" id="status" role="status" aria-live="polite">Bennett starts with $10. A burger costs $8.</p>
+  <p class="status" id="status" role="status" aria-live="polite">Drag the burger to Bennett to feed him.</p>
 
   <script>
     const stage = document.getElementById("stage");
     const bennett = document.getElementById("bennett");
     const buyButton = document.getElementById("buy-button");
-    const moneyDisplay = document.getElementById("money");
+    const coinsDisplay = document.getElementById("coins");
     const status = document.getElementById("status");
     const burgerSize = 100;
     const bennettSize = 116;
     const gravity = 1250;
     const floorBounce = 0.62;
     const wallBounce = 0.72;
-    let money = 10;
-    let nextId = 0;
+    let coins = 10;
 
     function stageBounds() {
       return { width: stage.clientWidth, height: stage.clientHeight };
@@ -204,7 +195,7 @@
 
     function makeBody(element, x, y, width, height, isBennett = false) {
       return {
-        id: ++nextId, element, x, y, vx: 0, vy: 0, angle: 0, spin: 0,
+        element, x, y, vx: 0, vy: 0, angle: 0, spin: 0,
         width, height, isBennett, held: false, pointerId: null,
         grabX: 0, grabY: 0, lastX: 0, lastY: 0, lastTime: 0, removed: false
       };
@@ -222,15 +213,15 @@
 
     function placeBennett() {
       const bounds = stageBounds();
-      benBody.x = bounds.width * 0.66;
+      benBody.x = bounds.width * 0.5;
       benBody.y = bounds.height - bennettSize / 2 - 12;
       setPosition(benBody);
     }
 
-    function updateMoney() {
-      moneyDisplay.textContent = `$${money.toFixed(2)}`;
-      buyButton.disabled = money < 8;
-      buyButton.textContent = money >= 8 ? "Dispense · $8" : "Need $8";
+    function updateCoins() {
+      coinsDisplay.textContent = String(coins);
+      buyButton.disabled = coins < 8;
+      buyButton.textContent = coins >= 8 ? "Buy Burger · 8" : "Need 8 Coins";
     }
 
     function playShake() {
@@ -241,33 +232,34 @@
     }
 
     function dispenseBurger() {
-      if (money < 8) {
-        status.textContent = "Bennett needs $8 for another burger.";
+      if (coins < 8) {
+        status.textContent = "You need 8 coins for a burger.";
         return;
       }
-      money -= 8;
-      updateMoney();
+      coins -= 8;
+      updateCoins();
+
       const burger = document.createElement("img");
       burger.className = "dropped-burger";
       burger.src = "burger.png";
-      burger.alt = "Dispensed burger. Drag or throw it to Bennett to feed him.";
+      burger.alt = "Burger";
       burger.draggable = false;
       stage.append(burger);
 
       const bounds = stageBounds();
-      const dispenser = document.querySelector(".dispenser").getBoundingClientRect();
+      const tube = document.querySelector(".tube").getBoundingClientRect();
       const stageRect = stage.getBoundingClientRect();
       const body = makeBody(
         burger,
-        dispenser.left + dispenser.width / 2 - stageRect.left,
-        Math.max(burgerSize / 2, dispenser.bottom - stageRect.top + burgerSize / 2),
+        tube.left + tube.width / 2 - stageRect.left,
+        Math.max(burgerSize / 2 + 8, tube.bottom - stageRect.top + burgerSize / 2),
         burgerSize,
         burgerSize
       );
-      body.vy = 35;
+      body.vy = 45;
       bodies.push(body);
       setPosition(body);
-      status.textContent = "Burger dispensed! Drag or throw it to Bennett.";
+      status.textContent = "Burger dispensed. Drag it to Bennett.";
     }
 
     buyButton.addEventListener("click", dispenseBurger);
@@ -310,8 +302,7 @@
       body.lastY = py;
       body.lastTime = now;
       setPosition(body);
-      if (body.isBennett) feedCollisionCheck();
-      else feedCollisionCheck();
+      feedCollisionCheck();
     }
 
     function endDrag(body, event) {
@@ -332,7 +323,6 @@
     }
 
     function feedCollisionCheck() {
-      if (benBody.removed) return;
       const benRadius = bennettSize * 0.34;
       for (const body of bodies) {
         if (body.isBennett || body.removed || body.held) continue;
@@ -350,37 +340,34 @@
       bennett.classList.remove("munch");
       void bennett.offsetWidth;
       bennett.classList.add("munch");
-      status.textContent = "Nom nom! Bennett ate a burger!";
+      status.textContent = "Bennett ate the burger!";
       playShake();
       setTimeout(() => body.element.remove(), 500);
       setTimeout(() => bennett.classList.remove("munch"), 600);
     }
 
     attachDrag(benBody);
-    addEventListener("pointerdown", (event) => {
-      const body = bodies.find((item) => item.element === event.target && !item.isBennett);
-      if (body) beginDrag(body, event);
-    });
-    addEventListener("pointermove", (event) => {
-      const body = bodies.find((item) => item.element === event.target && !item.isBennett);
-      if (body) moveDrag(body, event);
-    });
-    addEventListener("pointerup", (event) => {
-      const body = bodies.find((item) => item.pointerId === event.pointerId && !item.isBennett);
-      if (body) endDrag(body, event);
-    });
-    addEventListener("pointercancel", (event) => {
-      const body = bodies.find((item) => item.pointerId === event.pointerId && !item.isBennett);
-      if (body) endDrag(body, event);
-    });
 
-    function overlap(a, b) {
-      return Math.abs(a.x - b.x) < (a.width + b.width) * 0.36 && Math.abs(a.y - b.y) < (a.height + b.height) * 0.36;
+    let burgerPointerListenerReady = false;
+    function attachBurgerWhenCreated(burger, body) {
+      attachDrag(body);
     }
 
+    const originalAppend = stage.append.bind(stage);
+    stage.append = function(...nodes) {
+      originalAppend(...nodes);
+      for (const node of nodes) {
+        if (node.classList?.contains("dropped-burger")) {
+          const body = bodies.find((item) => item.element === node);
+          if (body) attachBurgerWhenCreated(node, body);
+        }
+      }
+    };
+
+    let previous = performance.now();
     function step(now) {
-      const dt = Math.min((now - step.last) / 1000, 0.032);
-      step.last = now;
+      const dt = Math.min((now - previous) / 1000, 0.032);
+      previous = now;
       const bounds = stageBounds();
       const floorY = bounds.height - 12;
 
@@ -397,11 +384,9 @@
         if (body.x < halfW) {
           body.x = halfW;
           body.vx = Math.abs(body.vx) * wallBounce;
-          body.spin += body.vy * 0.001;
         } else if (body.x > bounds.width - halfW) {
           body.x = bounds.width - halfW;
           body.vx = -Math.abs(body.vx) * wallBounce;
-          body.spin -= body.vy * 0.001;
         }
         if (body.y < halfH) {
           body.y = halfH;
@@ -426,7 +411,6 @@
       feedCollisionCheck();
       requestAnimationFrame(step);
     }
-    step.last = performance.now();
 
     document.body.addEventListener("animationend", (event) => {
       if (event.animationName === "shake") document.body.classList.remove("screen-shake");
@@ -441,7 +425,7 @@
     });
 
     placeBennett();
-    updateMoney();
+    updateCoins();
     requestAnimationFrame(step);
   </script>
 </body>
