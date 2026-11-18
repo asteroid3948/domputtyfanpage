@@ -29,6 +29,8 @@
     .character.held, .physics-item.held { cursor: grabbing; }
     .physics-item { z-index: 4; }
     .physics-item.burger { width: 56px; height: 56px; }
+    .physics-item.goop { width: 30px; height: 30px; }
+    .physics-item.slime { width: 68px; height: 68px; }
     .physics-item.snickers { width: 76px; height: 44px; }
     .physics-item.tom { width: 66px; height: 66px; }
     .physics-item.money { width: 42px; height: 30px; }
@@ -50,6 +52,8 @@
       #stage { inset-block-start: 118px; }
       .character { width: 112px; height: 112px; }
       .physics-item.burger { width: 48px; height: 48px; }
+      .physics-item.goop { width: 26px; height: 26px; }
+      .physics-item.slime { width: 58px; height: 58px; }
       .physics-item.snickers { width: 68px; height: 40px; }
       .physics-item.tom { width: 58px; height: 58px; }
       .physics-item.money { width: 38px; height: 27px; }
@@ -67,8 +71,8 @@
       <button class="buy-button" id="buy-button" type="button">Buy Burger · 8</button>
     </div>
   </header>
-  <main id="stage" aria-label="Burger play area">
-    <img class="character" id="bennett" src="bs.png" alt="Bennett Speller. Drag him or drag items onto him." draggable="false">
+  <main id="stage" aria-label="Play area">
+    <img class="character" id="bennett" src="bs.png" alt="Bennett Speller. Drag him or click him to make goop." draggable="false">
   </main>
   <div class="conversion" id="conversion" role="progressbar" aria-label="Burger to Snickers progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-fill" id="progress-fill"></div><span class="progress-percent" id="progress-percent">0%</span></div>
 
@@ -82,10 +86,11 @@
     const progressPercent = document.getElementById("progress-percent");
     const gravity = 1250, floorBounce = .62, wallBounce = .72, burgerCost = 8, conversionTime = 2600;
     let coins = 10, converting = false, conversionQueue = 0, conversionStartedAt = 0;
+    let slimeBody = null, goopFed = 0;
     const bodies = [];
 
     function makeBody(element, x, y, width, height, kind) {
-      return { element, x, y, vx: 0, vy: 0, angle: 0, spin: 0, width, height, kind, held: false, pointerId: null, grabX: 0, grabY: 0, lastX: 0, lastY: 0, lastTime: 0, removed: false };
+      return { element, x, y, vx: 0, vy: 0, angle: 0, spin: 0, width, height, kind, held: false, pointerId: null, grabX: 0, grabY: 0, lastX: 0, lastY: 0, lastTime: 0, movedDuringDrag: false, removed: false };
     }
     const benBody = makeBody(bennett, 0, 0, 116, 116, "bennett");
     bodies.push(benBody);
@@ -109,8 +114,7 @@
       body.element.addEventListener("pointerdown", event => {
         if (body.removed) return;
         event.preventDefault();
-        body.held = true;
-        body.pointerId = event.pointerId;
+        body.held = true; body.pointerId = event.pointerId; body.movedDuringDrag = false;
         const rect = stage.getBoundingClientRect();
         const px = event.clientX - rect.left, py = event.clientY - rect.top;
         body.grabX = px - body.x; body.grabY = py - body.y;
@@ -125,6 +129,7 @@
         const px = event.clientX - rect.left, py = event.clientY - rect.top;
         const dt = Math.max((now - body.lastTime) / 1000, .008);
         const dx = px - body.lastX, dy = py - body.lastY;
+        if (Math.hypot(dx, dy) > 4) body.movedDuringDrag = true;
         body.vx = dx / dt; body.vy = dy / dt;
         body.spin = (dx - dy) * .008; body.angle += body.spin;
         body.x = px - body.grabX; body.y = py - body.grabY;
@@ -136,17 +141,18 @@
         const onBennett = body !== benBody && droppedOn(body, bennett);
         const tomBody = bodies.find(item => item.kind === "tom" && !item.removed);
         const onTom = body.kind === "snickers" && tomBody && droppedOn(body, tomBody.element);
+        const onSlime = body.kind === "goop" && slimeBody && !slimeBody.removed && droppedOn(body, slimeBody.element);
         body.held = false; body.pointerId = null; body.element.classList.remove("held");
         body.vx = Math.max(-1900, Math.min(1900, body.vx));
         body.vy = Math.max(-1900, Math.min(1900, body.vy));
         if (body.kind === "burger" && onBennett) eatBurger(body);
         else if (body.kind === "snickers" && onTom) giveSnickersToTom(body, tomBody);
         else if (body.kind === "money" && onBennett) acceptDollar(body);
+        else if (body.kind === "goop" && onSlime) feedSlime(body);
       };
       body.element.addEventListener("pointerup", release);
       body.element.addEventListener("pointercancel", release);
     }
-    // Bennett is draggable too; this was missing in the previous version.
     attachDrag(benBody);
 
     function droppedOn(body, target) {
@@ -160,10 +166,29 @@
       stage.append(image);
       const body = makeBody(image, x, y, width, height, kind);
       body.vx = vx; body.vy = vy;
-      body.spin = kind === "snickers" ? -.07 : kind === "tom" ? .025 : .04;
+      body.spin = kind === "snickers" ? -.07 : kind === "tom" ? .025 : (Math.random() - .5) * .12;
       bodies.push(body); attachDrag(body); setPosition(body);
       return body;
     }
+
+    function spawnGoop() {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 250 + Math.random() * 260;
+      const x = benBody.x + Math.cos(angle) * 34;
+      const y = benBody.y + Math.sin(angle) * 34;
+      spawn("goop", "goop.png", x, y, Math.cos(angle) * speed, Math.sin(angle) * speed - 70, 30, 30, "Goop. Drag five pieces to the slime character for one coin.");
+      bennett.classList.remove("munch"); void bennett.offsetWidth; bennett.classList.add("munch");
+      setTimeout(() => bennett.classList.remove("munch"), 600);
+      if (!slimeBody || slimeBody.removed) {
+        const sx = Math.max(50, Math.min(stage.clientWidth - 50, benBody.x + 150));
+        slimeBody = spawn("slime", "slime.png", sx, Math.max(70, benBody.y - 60), 0, 0, 68, 68, "Slime character. Drag goop onto him; five goop earns one coin.");
+      }
+    }
+    bennett.addEventListener("click", () => {
+      if (!benBody.movedDuringDrag) spawnGoop();
+      benBody.movedDuringDrag = false;
+    });
+
     function dispenseBurger() {
       if (coins < burgerCost) return;
       coins -= burgerCost; updateCoins();
@@ -175,19 +200,18 @@
     }
     buyButton.addEventListener("click", dispenseBurger);
 
+    function startConversion() {
+      if (!conversionQueue) { converting = false; conversion.classList.remove("visible"); return; }
+      conversionQueue--; converting = true; conversionStartedAt = performance.now();
+      conversion.classList.add("visible"); updateConversionPosition();
+    }
     function eatBurger(body) {
       if (body.removed) return;
       body.removed = true; body.element.classList.add("consuming");
       setTimeout(() => body.element.remove(), 400);
       bennett.classList.remove("munch"); void bennett.offsetWidth; bennett.classList.add("munch");
       setTimeout(() => bennett.classList.remove("munch"), 600);
-      conversionQueue++;
-      if (!converting) startConversion();
-    }
-    function startConversion() {
-      if (!conversionQueue) { converting = false; conversion.classList.remove("visible"); return; }
-      conversionQueue--; converting = true; conversionStartedAt = performance.now();
-      conversion.classList.add("visible"); updateConversionPosition();
+      conversionQueue++; if (!converting) startConversion();
     }
     function updateConversionPosition() {
       if (!converting) return;
@@ -198,12 +222,10 @@
     function finishConversion() {
       converting = false; conversion.classList.remove("visible");
       progressFill.style.width = "0%"; progressPercent.textContent = "0%"; conversion.setAttribute("aria-valuenow", "0");
-      // Snickers shoots from Bennett; Tom enters separately and does not collide with it.
       spawn("snickers", "bar.png", Math.max(45, benBody.x - 35), Math.max(55, benBody.y - 36), -300, -420, 72, 42, "Snickers bar. Drag it onto Tom.");
       const tomX = Math.min(stage.clientWidth - 45, benBody.x + Math.min(190, stage.clientWidth * .25));
       const tom = spawn("tom", "tom.jpeg", tomX, Math.max(65, benBody.y - 60), 0, 0, 62, 62, "Tom. Drop the Snickers on him.");
-      tom.spin = 0;
-      if (conversionQueue) startConversion();
+      tom.spin = 0; if (conversionQueue) startConversion();
     }
     function giveSnickersToTom(bar, tom) {
       removeBody(bar);
@@ -213,14 +235,21 @@
     }
     function removeBody(body) { if (body.removed) return; body.removed = true; body.element.remove(); }
     function acceptDollar(body) {
-      removeBody(body); coins += 1; updateCoins();
+      removeBody(body); coins++; updateCoins();
       bennett.classList.remove("munch"); void bennett.offsetWidth; bennett.classList.add("munch");
       setTimeout(() => bennett.classList.remove("munch"), 600);
     }
+    function feedSlime(body) {
+      removeBody(body); goopFed++;
+      slimeBody.element.animate([{ scale: "1" }, { scale: "1.12 .9" }, { scale: "1" }], { duration: 220 });
+      if (goopFed >= 5) {
+        goopFed -= 5; coins++; updateCoins();
+        slimeBody.element.animate([{ scale: "1" }, { scale: "1.25" }, { scale: "1" }], { duration: 350 });
+      }
+    }
     function updateConversion(now) {
       if (!converting) return;
-      const progress = Math.min((now - conversionStartedAt) / conversionTime, 1);
-      const percent = Math.floor(progress * 100);
+      const progress = Math.min((now - conversionStartedAt) / conversionTime, 1), percent = Math.floor(progress * 100);
       progressFill.style.width = `${percent}%`; progressPercent.textContent = `${percent}%`;
       conversion.setAttribute("aria-valuenow", String(percent)); updateConversionPosition();
       if (progress >= 1) finishConversion();
@@ -246,8 +275,7 @@
         }
         setPosition(body);
       }
-      updateConversion(now);
-      requestAnimationFrame(animate);
+      updateConversion(now); requestAnimationFrame(animate);
     }
     addEventListener("resize", () => {
       for (const body of bodies) {
