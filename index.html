@@ -17,17 +17,18 @@
     .topbar { position: fixed; z-index: 5; inset: 0 0 auto; height: 112px; padding: 18px 22px; border-bottom: 1px solid #ffffff12; background: #171d1a; }
     .brand { position: absolute; top: 18px; left: 22px; margin: 0; font-size: clamp(1.05rem, 2.8vw, 1.65rem); letter-spacing: -.04em; }
     .top-actions { position: absolute; top: 18px; right: 22px; display: flex; align-items: center; gap: 16px; }
-    .coins { padding: 7px 9px; border: 1px solid transparent; border-radius: 8px; color: #bfc8c2; font-size: .9rem; transition: background .15s, border-color .15s; }
+    .coins { padding: 7px 9px; border: 1px solid transparent; border-radius: 8px; color: #bfc8c2; font-size: .9rem; }
     .coins strong { display: inline-block; margin-left: 5px; color: #7be397; font-size: 1.12rem; }
     .buy-button { border: 1px solid #78cd8e; border-radius: 9px; padding: 9px 12px; background: transparent; color: #bff1cc; font-weight: 800; cursor: pointer; }
     .buy-button:hover:not(:disabled) { background: #78cd8e18; }
     .buy-button:disabled { cursor: not-allowed; opacity: .42; }
+
     .tube { position: absolute; z-index: 7; top: -18px; left: 50%; width: 22px; height: 94px; transform: translateX(-50%); border: 2px solid #7d8981; border-radius: 0 0 11px 11px; background: linear-gradient(90deg, #69766e, #b2bdb5 48%, #69766e); }
     .tube::after { position: absolute; bottom: -7px; left: 50%; width: 34px; height: 10px; transform: translateX(-50%); border-radius: 0 0 6px 6px; background: #69766e; content: ""; }
 
     #stage { position: fixed; z-index: 1; inset: 112px 0 0; overflow: hidden; background: radial-gradient(ellipse at 50% 35%, #26312a, #111714 68%, #0c100e); }
     #stage::after { position: absolute; right: 0; bottom: 0; left: 0; height: 15px; background: #596359; content: ""; pointer-events: none; }
-    .character, .physics-item { position: absolute; z-index: 2; width: 116px; height: 116px; object-fit: contain; cursor: grab; touch-action: none; user-select: none; -webkit-user-drag: none; will-change: left, top, transform; }
+    .character, .physics-item { position: absolute; z-index: 2; object-fit: contain; cursor: grab; touch-action: none; user-select: none; -webkit-user-drag: none; will-change: left, top, transform; }
     .character { width: 132px; height: 132px; z-index: 3; }
     .character.held, .physics-item.held { cursor: grabbing; }
     .physics-item { z-index: 4; }
@@ -35,11 +36,10 @@
 
     .conversion { position: fixed; z-index: 6; display: none; width: 92px; height: 22px; overflow: hidden; border: 1px solid #ffffff55; border-radius: 12px; background: #d7ddd7; box-shadow: 0 3px 12px #0005; pointer-events: none; }
     .conversion.visible { display: block; }
-    .progress-fill { width: 0; height: 100%; border-radius: inherit; background: #78cd8e; transition: width .05s linear; }
+    .progress-fill { width: 0; height: 100%; border-radius: inherit; background: #78cd8e; }
     .progress-percent { position: absolute; inset: 0; display: grid; place-items: center; color: #15241a; font-size: .72rem; font-weight: 800; text-shadow: 0 1px #ffffff90; }
-    .status { position: fixed; z-index: 4; right: 12px; bottom: 20px; left: 12px; margin: 0; color: #bdc7c0; font-size: .82rem; text-align: center; pointer-events: none; }
-    body.screen-shake { animation: shake .38s linear; }
 
+    body.screen-shake { animation: shake .38s linear; }
     @keyframes item-consumed { 0% { opacity: 1; scale: 1; } 100% { opacity: 0; scale: .08; translate: 0 22px; } }
     @keyframes munch { 0%, 100% { scale: 1; } 22% { scale: 1.12 .82; } 48% { scale: .9 1.12; } 72% { scale: 1.08 .9; } }
     @keyframes shake { 0%, 100% { translate: 0 0; } 20%, 60% { translate: -5px 2px; } 40%, 80% { translate: 5px -2px; } }
@@ -75,14 +75,12 @@
     <div class="progress-fill" id="progress-fill"></div>
     <span class="progress-percent" id="progress-percent">0%</span>
   </div>
-  <p class="status" id="status" role="status" aria-live="polite">Drag burgers onto Bennett. Drag Snickers to Tom, then dollar notes onto Bennett.</p>
 
   <script>
     const stage = document.getElementById("stage");
     const bennett = document.getElementById("bennett");
     const buyButton = document.getElementById("buy-button");
     const coinsDisplay = document.getElementById("coins");
-    const status = document.getElementById("status");
     const conversion = document.getElementById("conversion");
     const progressFill = document.getElementById("progress-fill");
     const progressPercent = document.getElementById("progress-percent");
@@ -95,16 +93,16 @@
     let converting = false;
     let conversionQueue = 0;
     let conversionStartedAt = 0;
-    let nextId = 0;
+
+    const bodies = [];
+    const bennettSize = 116;
 
     function stageBounds() { return { width: stage.clientWidth, height: stage.clientHeight }; }
 
     function makeBody(element, x, y, width, height, kind) {
-      return { id: ++nextId, element, x, y, vx: 0, vy: 0, angle: 0, spin: 0, width, height, kind, held: false, pointerId: null, grabX: 0, grabY: 0, lastX: 0, lastY: 0, lastTime: 0, removed: false };
+      return { element, x, y, vx: 0, vy: 0, angle: 0, spin: 0, width, height, kind, held: false, pointerId: null, grabX: 0, grabY: 0, lastX: 0, lastY: 0, lastTime: 0, removed: false };
     }
 
-    const bodies = [];
-    const bennettSize = 116;
     const benBody = makeBody(bennett, 0, 0, bennettSize, bennettSize, "bennett");
     bodies.push(benBody);
 
@@ -182,16 +180,11 @@
 
     function shootRewards() {
       const bounds = stageBounds();
-      const barX = Math.max(55, benBody.x - 42);
-      const barY = Math.max(70, benBody.y - 42);
-      spawnPhysicsItem("snickers", "bar.png", barX, barY, -330, -460, 92, 56, "Snickers bar. Drag it onto Tom.");
-      // Tom enters from the opposite side and remains a separate target: items do not collide automatically.
+      spawnPhysicsItem("snickers", "bar.png", Math.max(55, benBody.x - 42), Math.max(70, benBody.y - 42), -330, -460, 92, 56, "Snickers bar. Drag it onto Tom.");
       const tomX = Math.min(bounds.width - 55, benBody.x + Math.min(210, bounds.width * .27));
-      const tomY = Math.max(80, benBody.y - 70);
-      const tom = spawnPhysicsItem("tom", "tom.jpeg", tomX, tomY, tomX > benBody.x ? -115 : 115, -80, 72, 72, "Tom. Drop a Snickers on him.");
+      const tom = spawnPhysicsItem("tom", "tom.jpeg", tomX, Math.max(80, benBody.y - 70), tomX > benBody.x ? -115 : 115, -80, 72, 72, "Tom. Drop a Snickers on him.");
       tom.vy = 0;
       tom.spin = 0;
-      status.textContent = "Drag the Snickers onto Tom.";
       playShake();
     }
 
@@ -206,10 +199,7 @@
     }
 
     function dispenseBurger() {
-      if (coins < burgerCost) {
-        status.textContent = "You need 8 coins for a burger.";
-        return;
-      }
+      if (coins < burgerCost) return;
       coins -= burgerCost;
       updateCoins();
       const tube = document.querySelector(".tube").getBoundingClientRect();
@@ -217,7 +207,6 @@
       const x = tube.left + tube.width / 2 - stageRect.left;
       const y = Math.max(50, tube.bottom - stageRect.top + 44);
       spawnPhysicsItem("burger", "burger.png", x, y, (Math.random() - .5) * 55, 55, 92, 92, "Burger. Drag it onto Bennett to feed him.");
-      status.textContent = "Drag the burger onto Bennett.";
     }
     buyButton.addEventListener("click", dispenseBurger);
 
@@ -278,19 +267,15 @@
       body.element.remove();
     }
 
-    function animateConsume(element, callback) {
-      element.classList.add("consuming");
-      element.addEventListener("animationend", callback, { once: true });
-    }
-
     function eatBurger(body) {
       if (body.removed) return;
       body.removed = true;
-      animateConsume(body.element, () => body.element.remove());
+      body.element.classList.add("consuming");
+      body.element.style.pointerEvents = "none";
+      setTimeout(() => body.element.remove(), 400);
       bennett.classList.remove("munch");
       void bennett.offsetWidth;
       bennett.classList.add("munch");
-      status.textContent = "Burger eaten. Converting…";
       playShake();
       setTimeout(() => bennett.classList.remove("munch"), 600);
       enqueueConversion();
@@ -301,16 +286,12 @@
       const startY = benBody.y - 36;
       spawnPhysicsItem("money", "dal.png", startX - 18, startY, -125, -290, 54, 38, "$1 note. Drag it onto Bennett.");
       spawnPhysicsItem("money", "dal.png", startX + 18, startY - 5, 125, -330, 54, 38, "$1 note. Drag it onto Bennett.");
-      status.textContent = "Tom gave Bennett two $1 notes. Drag each note onto Bennett.";
     }
 
     function acceptSnickers(body) {
       removeBody(body);
       const tom = bodies.find((item) => item.kind === "tom" && !item.removed);
-      if (tom) {
-        // A brief squash makes Tom react without the Snickers physically striking him.
-        tom.element.animate([{ scale: "1" }, { scale: "1.08 .92" }, { scale: "1" }], { duration: 300, easing: "ease-out" });
-      }
+      if (tom) tom.element.animate([{ scale: "1" }, { scale: "1.08 .92" }, { scale: "1" }], { duration: 300, easing: "ease-out" });
       spitOutDollars();
     }
 
@@ -321,7 +302,6 @@
       bennett.classList.remove("munch");
       void bennett.offsetWidth;
       bennett.classList.add("munch");
-      status.textContent = "Bennett took a dollar. +1 coin.";
       setTimeout(() => bennett.classList.remove("munch"), 600);
     }
 
@@ -337,7 +317,6 @@
       body.vx = Math.max(-1900, Math.min(1900, body.vx));
       body.vy = Math.max(-1900, Math.min(1900, body.vy));
 
-      // Gameplay actions only occur on a deliberate pointer release over the target.
       if (body.kind === "burger" && releasedOnBennett) eatBurger(body);
       else if (body.kind === "snickers" && releasedOnTom) acceptSnickers(body);
       else if (body.kind === "money" && releasedOnBennett) acceptDollar(body);
@@ -361,9 +340,10 @@
       if (progress >= 1) finishConversion();
     }
 
+    let previousTime = performance.now();
     function step(now) {
-      const dt = Math.min((now - step.last) / 1000, .032);
-      step.last = now;
+      const dt = Math.min((now - previousTime) / 1000, .032);
+      previousTime = now;
       const bounds = stageBounds();
       const floorY = bounds.height - 12;
 
@@ -391,7 +371,6 @@
       updateConversion(now);
       requestAnimationFrame(step);
     }
-    step.last = performance.now();
 
     document.body.addEventListener("animationend", (event) => {
       if (event.animationName === "shake") document.body.classList.remove("screen-shake");
