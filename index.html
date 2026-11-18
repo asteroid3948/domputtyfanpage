@@ -21,6 +21,7 @@
 
     body {
       min-height: 100vh;
+      overflow: hidden;
       background: #050505;
       color: #f7f4f2;
       font-family: "DM Sans", "Segoe UI", sans-serif;
@@ -35,6 +36,27 @@
       animation: idle-bob 3s ease-in-out infinite;
     }
 
+    .walking-area {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: 130px;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .bennett {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 110px;
+      height: 110px;
+      object-fit: contain;
+      transform-origin: center bottom;
+      animation: walk-across 14s linear infinite, waddle 0.32s ease-in-out infinite alternate;
+    }
+
     @keyframes idle-bob {
       0%,
       100% {
@@ -45,14 +67,50 @@
       }
     }
 
+    @keyframes walk-across {
+      0%,
+      49.9% {
+        left: 0;
+        transform: scaleX(1);
+      }
+      50%,
+      99.9% {
+        left: calc(100% - 110px);
+        transform: scaleX(-1);
+      }
+      100% {
+        left: 0;
+        transform: scaleX(1);
+      }
+    }
+
+    @keyframes waddle {
+      from {
+        translate: 0 0;
+        rotate: -4deg;
+      }
+      to {
+        translate: 0 -3px;
+        rotate: 4deg;
+      }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       h1 {
         animation: none;
+      }
+
+      .bennett {
+        animation: none;
+        left: calc(50% - 55px);
       }
     }
   </style>
 </head>
 <body>
   <h1>Dom Putty Fanpage</h1>
+  <div class="walking-area" aria-hidden="true">
+    <img class="bennett" src="bs.png" alt="">
+  </div>
 </body>
 </html>
