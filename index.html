@@ -53,9 +53,7 @@
 
     .bennett.is-held { cursor: grabbing; }
 
-    body.screen-shake {
-      animation: screen-shake 0.55s cubic-bezier(.36,.07,.19,.97) both;
-    }
+    body.screen-shake { animation: screen-shake 0.55s cubic-bezier(.36,.07,.19,.97) both; }
 
     @keyframes idle-bob {
       0%, 100% { transform: translateY(0); }
@@ -100,7 +98,6 @@
       lastPointerX: 0,
       lastPointerY: 0,
       lastMoveTime: 0,
-      stepTime: 0,
       recovering: false,
       recoveryStart: 0,
       recoveryFrom: 0,
@@ -113,15 +110,32 @@
       bennett.style.transform = `translate(-50%, -50%) rotate(${state.angle}rad) scaleX(${state.direction})`;
     }
 
-    function shakeScreen(strength = 1) {
+    function shakeScreen() {
       if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      document.body.style.setProperty("--shake-strength", strength);
       document.body.classList.remove("screen-shake");
       void document.body.offsetWidth;
       document.body.classList.add("screen-shake");
     }
 
+    function normalizeAngle(angle) {
+      while (angle > Math.PI) angle -= Math.PI * 2;
+      while (angle < -Math.PI) angle += Math.PI * 2;
+      return angle;
+    }
+
+    function startRecovery() {
+      const nearestFlatAngle = Math.round(normalizeAngle(state.angle) / (Math.PI / 2)) * (Math.PI / 2);
+      if (Math.abs(normalizeAngle(state.angle) - nearestFlatAngle) < 0.04) {
+        if (Math.abs(nearestFlatAngle) < 0.04) return;
+      }
+      state.recovering = true;
+      state.recoveryStart = performance.now();
+      state.recoveryFrom = state.angle;
+      state.recoveryTo = Math.round(state.angle / (Math.PI * 2)) * Math.PI * 2;
+    }
+
     bennett.addEventListener("pointerdown", (event) => {
+      event.preventEvent?.();
       event.preventDefault();
       state.held = true;
       state.recovering = false;
@@ -149,7 +163,6 @@
       state.vy = dy / elapsed;
       state.angularVelocity = (dx - dy * 0.45) * 0.018;
       state.angle += state.angularVelocity;
-
       state.x = event.clientX - state.grabX;
       state.y = event.clientY - state.grabY;
 
@@ -160,32 +173,14 @@
       drawBennett();
     });
 
-    function normalizeAngle(angle) {
-      while (angle > Math.PI) angle -= Math.PI * 2;
-      while (angle < -Math.PI) angle += Math.PI * 2;
-      return angle;
-    }
-
-    function startRecovery() {
-      if (normalizeAngle(state.angle) < 0.05 && normalizeAngle(state.angle) > -0.05) return;
-      state.recovering = true;
-      state.recoveryStart = performance.now();
-      state.recoveryFrom = state.angle;
-      let target = Math.round(state.angle / (Math.PI * 2)) * Math.PI * 2;
-      state.recoveryTo = target;
-    }
-
     function dropBennett(event) {
       if (!state.held || (event && event.pointerId !== state.pointerId)) return;
       state.held = false;
       state.pointerId = null;
       bennett.classList.remove("is-held");
-
-      // Preserve the release velocity with a slight multiplier for satisfying throws.
       state.vx *= 0.95;
       state.vy *= 0.95;
       state.angularVelocity = normalizeAngle(state.angularVelocity);
-      if (Math.abs(state.vx) + Math.abs(state.vy) > 900) shakeScreen(0.7);
       startRecovery();
     }
 
@@ -197,6 +192,7 @@
     });
 
     let previousTime = performance.now();
+
     function animate(now) {
       const delta = Math.min((now - previousTime) / 1000, 0.032);
       previousTime = now;
@@ -210,27 +206,26 @@
           state.angularVelocity *= Math.pow(0.985, delta * 60);
 
           const half = size / 2;
-          const floor = innerHeight - half;
 
           if (state.x + half > innerWidth) {
             state.x = innerWidth - half;
             state.vx = -Math.abs(state.vx) * wallBounce;
             state.angularVelocity += state.vy * 0.002;
-            if (Math.abs(state.vx) > 180) shakeScreen(0.35);
+            if (Math.abs(state.vx) > 180) shakeScreen();
           } else if (state.x - half < 0) {
             state.x = half;
             state.vx = Math.abs(state.vx) * wallBounce;
             state.angularVelocity -= state.vy * 0.002;
-            if (Math.abs(state.vx) > 180) shakeScreen(0.35);
+            if (Math.abs(state.vx) > 180) shakeScreen();
           }
 
           if (state.y + half > innerHeight) {
-            state.y = floor;
+            state.y = innerHeight - half;
             if (Math.abs(state.vy) > 170) {
               state.vy = -Math.abs(state.vy) * floorBounce;
               state.vx *= 0.88;
               state.angularVelocity += state.vx * 0.0008;
-              shakeScreen(Math.min(Math.abs(state.vy) / 900, 1));
+              shakeScreen();
             } else {
               state.vy = 0;
               state.vx *= 0.94;
@@ -262,6 +257,7 @@
           const progress = Math.min((now - state.recoveryStart) / 650, 1);
           const eased = 1 - Math.pow(1 - progress, 3);
           state.angle = state.recoveryFrom + (state.recoveryTo - state.recoveryFrom) * eased;
+
           if (progress === 1) {
             state.recovering = false;
             state.angle = 0;
